@@ -1,0 +1,40 @@
+.picker {
+  display: flex;
+  justify-content: center;
+}
+
+.colorPicker {
+  margin: 0;
+  width: 280px;
+}
+
+.iro__colorPicker {
+  margin-right: 0;
+}
+
+.colorValues {
+  margin-top: 45px;
+  margin-left: 60px;
+}
+
+.color-container {
+  width: 178px;
+  padding: 10px 15px;
+  font-family: 'Consolas', 'Courier New', Courier, monospace;
+  font-size: 16px;
+  letter-spacing: 0.1px;
+  line-height: 1.5;
+  border: 1px;
+  border-style: solid;
+}
+
+input {
+  text-align: center;
+  width: 3.5ch;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+#hex-label input {
+  width: 7.5ch;
+}

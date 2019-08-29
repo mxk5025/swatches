@@ -1,0 +1,8 @@
+# Files
+*.txt
+t*.md
+.env
+
+# Directories
+node_modules/
+build/
