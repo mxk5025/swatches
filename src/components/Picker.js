@@ -35,18 +35,9 @@ export default function Picker() {
   const [rgb, setRgb] = useState(values.rgb);
   const [hsl, setHsl] = useState(values.hsl);
 
-  // TODO: clean-up refs
   const colorPicker = useRef();
-  const colorValues = useRef();
   const colorContainer = useRef();
   const hexCode = useRef();
-  const red = useRef();
-  const green = useRef();
-  const blue = useRef();
-  const hue = useRef();
-  const saturation = useRef();
-  const lightness = useRef();
-
 
   const updateRgb = tempRgb => {
     setRgb(tempRgb);
@@ -86,7 +77,8 @@ export default function Picker() {
 
   const hslRgbPattern = RegExp('^[0-9]{1,3}$');
   const isInvalidInput = value => {
-    return !hslRgbPattern.test(value) || (value.startsWith('0') && value.length > 1);
+    return !hslRgbPattern.test(value) ||
+            (value.startsWith('0') && value.length > 1);
   };
 
   const hexPattern = RegExp('^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$');
@@ -94,7 +86,8 @@ export default function Picker() {
     return !hexPattern.test(value);
   };
 
-  const partialHexPattern = RegExp('^#([a-fA-F0-9]{0,2}|[a-fA-F0-9]{4,5})$|^([a-fA-F0-9]{1,2}|[a-fA-F0-9]{4,5})$');
+  const partialHexPattern = RegExp(`^#([a-fA-F0-9]{0,2}|[a-fA-F0-9]{4,5})$|
+                              ^([a-fA-F0-9]{1,2}|[a-fA-F0-9]{4,5})$`);
   const isPartialHexInput = value => {
     return partialHexPattern.test(value);
   };
@@ -104,7 +97,9 @@ export default function Picker() {
   };
 
   const handleSelect = e => {
-    const selection = document.getSelection ? document.getSelection().toString() : document.selection.createRange().toString();
+    const selection = document.getSelection ?
+                        document.getSelection().toString() :
+                        document.selection.createRange().toString();
     if (selection.length > 0 && !inputSelected) {
       setInputSelected(true);
     } else if (inputSelected) {
@@ -152,9 +147,7 @@ export default function Picker() {
     }
   };
 
-  // TODO
   const handleHexKeyPress = e => {
-    console.log(e.key);
     var value = e.target.value;
     const index = e.target.selectionStart;
     if (inputSelected && /[#a-fA-F0-9]/.test(e.key)) {
@@ -211,7 +204,7 @@ export default function Picker() {
       e.target.value = temp;
       setTemp(null);
     }
-    var value = e.target.value;
+    var value = e.target.value === '' ? '0' : e.target.value;
     var tempRgb = values.rgb;
     tempRgb[prop] = value;
     updateRgb(tempRgb);
@@ -222,7 +215,7 @@ export default function Picker() {
       e.target.value = temp;
       setTemp(null);
     }
-    var value = e.target.value;
+    var value = e.target.value === '' ? '0' : e.target.value;
     var tempHsl = values.hsl;
     tempHsl[prop] = value;
     updateHsl(tempHsl);
@@ -233,7 +226,7 @@ export default function Picker() {
       e.target.value = temp;
       setTemp(null);
     }
-    var value = e.target.value;
+    var value = e.target.value === '' ? '#000' : e.target.value;
     updateHex(value);
   }
 
@@ -268,8 +261,10 @@ export default function Picker() {
   return (
     <div className="picker">
       <div className="colorPicker" ref={colorPicker} />
-      <div className="colorValues" ref={colorValues}>
-        <div className="color-container" ref={colorContainer} style={{ backgroundColor: hex }}>
+      <div className="colorValues">
+        <div className="color-container" ref={colorContainer}
+          style={{backgroundColor: hex}}
+        >
           <div className="string-container">
             <div id="string-label">
 
@@ -291,17 +286,17 @@ export default function Picker() {
             hsl({hsl.h}, {hsl.s}%, {hsl.l}%)
             <div>
               h:&nbsp;
-              <input ref={hue} type="text" value={hsl.h} maxLength="3"
+              <input type="text" value={hsl.h} maxLength="3"
                 onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
-                onKeyPress={handleKeyPress(350)}
+                onKeyPress={handleKeyPress(360)}
                 onBlur={handleBlur}
                 onChange={handleHslChange('h')}
               />
             </div>
             <div>
               s:&nbsp;
-              <input ref={saturation} type="text" value={hsl.s} maxLength="3"
+              <input type="text" value={hsl.s} maxLength="3"
                 onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(100)}
@@ -311,7 +306,7 @@ export default function Picker() {
             </div>
             <div>
               l:&nbsp;
-              <input ref={lightness} type="text" value={hsl.l} maxLength="3"
+              <input type="text" value={hsl.l} maxLength="3"
                 onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(100)}
@@ -324,7 +319,7 @@ export default function Picker() {
             rgb({rgb.r}, {rgb.g}, {rgb.b})
             <div>
               r:&nbsp;
-              <input ref={red} type="text" value={rgb.r} maxLength="3"
+              <input type="text" value={rgb.r} maxLength="3"
                 onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
@@ -334,7 +329,7 @@ export default function Picker() {
             </div>
             <div>
               g:&nbsp;
-              <input ref={green} type="text" value={rgb.g} maxLength="3"
+              <input type="text" value={rgb.g} maxLength="3"
                 onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
@@ -344,7 +339,7 @@ export default function Picker() {
             </div>
             <div>
               b:&nbsp;
-              <input ref={blue} type="text" value={rgb.b} maxLength="3"
+              <input type="text" value={rgb.b} maxLength="3"
                 onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
