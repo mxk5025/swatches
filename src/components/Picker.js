@@ -1,5 +1,6 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 import iro from '@jaames/iro';
+import ColorUtil from '../api/ColorUtil.js';
 import './Picker.css';
 
 // Create a new color picker instance
@@ -29,8 +30,10 @@ pickerInstance.on(['color:init', 'color:change'], function(color){
 });
 
 export default function Picker() {
+  const [colorUtil] = useState(new ColorUtil());
   const [inputSelected, setInputSelected] = useState(false);
   const [temp, setTemp] = useState(null);
+  const [colorName, setColorName] = useState("Red");
   const [hex, setHex] = useState(values.hex);
   const [rgb, setRgb] = useState(values.rgb);
   const [hsl, setHsl] = useState(values.hsl);
@@ -38,6 +41,11 @@ export default function Picker() {
   const colorPicker = useRef();
   const colorContainer = useRef();
   const hexCode = useRef();
+
+  const updateColorName = useCallback(async () => {
+    const color = await colorUtil.getColor(values.hex);
+    setColorName(color.colors[0].name);
+  }, [colorUtil]);
 
   const updateRgb = tempRgb => {
     setRgb(tempRgb);
@@ -237,6 +245,7 @@ export default function Picker() {
   useEffect(() => {
     const handleMouseDown = e => {
       if (colorPicker.current.contains(e.target) && hasColorChanged()) {
+        updateColorName();
         setHex(values.hex);
         setRgb(values.rgb);
         setHsl(values.hsl);
@@ -244,19 +253,29 @@ export default function Picker() {
     };
     const handleMouseMove = e => {
       if (!colorContainer.current.contains(e.target) && hasColorChanged()) {
+        // Commented due to performance issues
+        // updateColorName();
         setHex(values.hex);
         setRgb(values.rgb);
         setHsl(values.hsl);
       }
     };
+    const handleMouseUp = e => {
+      // Activates when dragging on widget
+      if (hasColorChanged()) {
+        updateColorName();
+      }
+    }
 
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
     return () => {
       document.removeEventListener('mousedown', handleMouseDown);
       document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
     }
-  }, []);
+  }, [updateColorName]);
 
   return (
     <div className="picker">
@@ -267,7 +286,14 @@ export default function Picker() {
         >
           <div className="string-container">
             <div id="string-label">
-
+              name:&nbsp;
+              <input type="text" value={colorName} maxLength="40"
+                onSelect={handleSelect}
+                onKeyDown={handleKeyDown}
+                onKeyPress={() => {return}}
+                onBlur={() => {return}}
+                onChange={() => {return}}
+              />
             </div>
           </div>
           <div className="hex-container">

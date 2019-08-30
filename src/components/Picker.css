@@ -35,6 +35,10 @@ input {
   font-size: inherit;
 }
 
+#string-label input {
+  width: 13ch;
+}
+
 #hex-label input {
   width: 7.5ch;
 }
