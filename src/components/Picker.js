@@ -40,7 +40,7 @@ export default function Picker() {
 
   const colorPicker = useRef();
   const colorContainer = useRef();
-  const hexCode = useRef();
+  const red = useRef();
 
   const updateColorName = useCallback(async () => {
     const color = await colorUtil.getColor(values.hex);
@@ -70,6 +70,7 @@ export default function Picker() {
     }
   };
 
+  // Convert any string to a valid hex color
   const stringToColour = str => {
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
@@ -239,7 +240,7 @@ export default function Picker() {
   }
 
   const hasColorChanged = () => {
-    return values.hex !== hexCode.current.value;
+    return values.rgb.r !== red.current.value;
   }
 
   useEffect(() => {
@@ -253,17 +254,16 @@ export default function Picker() {
     };
     const handleMouseMove = e => {
       if (!colorContainer.current.contains(e.target) && hasColorChanged()) {
-        // Commented due to performance issues
-        // updateColorName();
         setHex(values.hex);
-        setRgb(values.rgb);
-        setHsl(values.hsl);
       }
     };
     const handleMouseUp = e => {
       // Activates when dragging on widget
       if (hasColorChanged()) {
+        console.log("color has changed");
         updateColorName();
+        setRgb(values.rgb);
+        setHsl(values.hsl);
       }
     }
 
@@ -299,7 +299,7 @@ export default function Picker() {
           <div className="hex-container">
             <div id="hex-label">
               hex:&nbsp;
-              <input ref={hexCode} type="text" value={hex} maxLength="7"
+              <input type="text" value={hex} maxLength="7"
                 onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleHexKeyPress}
@@ -345,7 +345,7 @@ export default function Picker() {
             rgb({rgb.r}, {rgb.g}, {rgb.b})
             <div>
               r:&nbsp;
-              <input type="text" value={rgb.r} maxLength="3"
+              <input ref={red} type="text" value={rgb.r} maxLength="3"
                 onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
