@@ -1,7 +1,9 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
+import ColorUtil from '../api/ColorUtil.js';
 import './Picker.css';
 
 export default function Picker({pickerName, pickerInstance, values}) {
+  const [colorUtil] = useState(new ColorUtil());
   const [inputSelected, setInputSelected] = useState(false);
   const [temp, setTemp] = useState(null);
   const [colorName, setColorName] = useState("Red");
