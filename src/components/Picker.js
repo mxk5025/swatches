@@ -1,36 +1,7 @@
-import React, {useState, useEffect, useCallback, useRef} from 'react';
-import iro from '@jaames/iro';
-import ColorUtil from '../api/ColorUtil.js';
+import React, {useState, useEffect, useRef} from 'react';
 import './Picker.css';
 
-// Create a new color picker instance
-// https://iro.js.org/guide.html#getting-started
-var pickerInstance = new iro.ColorPicker('.colorPicker', {
-  // color picker options
-  // Option guide: https://iro.js.org/guide.html#color-picker-options
-  width: 280,
-  color: 'rgb(255, 0, 0)',
-  borderWidth: 1,
-  borderColor: '#fff',
-});
-
-// pickerInstance.color.hexString = '#fff'
-// pickerInstance.color.rgb = { r: 255, g: 255, b: 255};
-// pickerInstance.color.rgbString = 'rgb(255,255,255)';
-// pickerInstance.color.hslString = 'hsl(360, 100%, 50%)';
-
-var values = {};
-// https://iro.js.org/guide.html#color-picker-events
-pickerInstance.on(['color:init', 'color:change'], function(color){
-  // Show the current color in different formats
-  // Using the selected color: https://iro.js.org/guide.html#selected-color-api
-  values.hex = color.hexString;
-  values.rgb = color.rgb;
-  values.hsl = color.hsl;
-});
-
-export default function Picker() {
-  const [colorUtil] = useState(new ColorUtil());
+export default function Picker({pickerName, pickerInstance, values}) {
   const [inputSelected, setInputSelected] = useState(false);
   const [temp, setTemp] = useState(null);
   const [colorName, setColorName] = useState("Red");
@@ -279,7 +250,7 @@ export default function Picker() {
 
   return (
     <div className="picker">
-      <div className="colorPicker" ref={colorPicker} />
+      <div className={pickerName} ref={colorPicker} />
       <div className="colorValues">
         <div className="color-container" ref={colorContainer}
           style={{backgroundColor: hex}}
