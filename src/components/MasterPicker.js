@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import PickerCreator from '../api/PickerCreator.js';
+import ColorUtil from '../api/ColorUtil.js';
 import Picker from './Picker';
 import './MasterPicker.css';
 
@@ -27,6 +28,7 @@ export default function MasterPicker() {
           pickerName={defaultPickerName + index}
           pickerInstance={picker[0]}
           values={picker[1]}
+          colorUtil ={new ColorUtil()}
         />
       ))}
     </div>

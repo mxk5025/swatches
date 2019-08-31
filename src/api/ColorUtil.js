@@ -1,25 +1,26 @@
-import axios from 'axios';
-
-const apiUrl = 'https://api.color.pizza/v1/';
+import namedColors from 'color-name-list';
+import nearestColor from 'nearest-color';
 
 export default class ColorUtil {
 
-  async get(url) {
-    try {
-      return await axios.get(url);
-    } catch (error) {
-      console.log(error);
-    }
+  constructor() {
+    this.namedColors = namedColors;
+    this.nearestColors = nearestColor.from(namedColors.reduce(
+                    (o, {name, hex}) => Object.assign(o, {[name]: hex}), {}));
   }
 
   getAllColors() {
-    return this.get(apiUrl);
+    return this.namedColors;
   }
 
-  async getColor(hex) {
-    hex = hex.startsWith('#') ? hex.slice(1) : hex;
-    const res = await this.get(apiUrl + hex);
-    return res.data;
+  // Get the exact matching color using a hex color code with '#' prepended
+  getColor(hex) {
+    return this.namedColors.find(color => color.hex === hex);
+  }
+
+  // Get the nearest color using a hex color code with '#' prepended
+  getNearestColor(hex) {
+    return this.nearestColors(hex);
   }
 
 }

@@ -1,9 +1,50 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
-import ColorUtil from '../api/ColorUtil.js';
 import './Picker.css';
 
-export default function Picker({pickerName, pickerInstance, values}) {
-  const [colorUtil] = useState(new ColorUtil());
+const isInvalidInput = value => {
+  const hslRgbPattern = RegExp('^[0-9]{1,3}$');
+  return !hslRgbPattern.test(value) ||
+  (value.startsWith('0') && value.length > 1);
+};
+
+const isInvalidHexInput = value => {
+  const hexPattern = RegExp('^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$');
+  return !hexPattern.test(value);
+};
+
+const convertShortHexToLongHex = hexVal => {
+  var sixHex = "#";
+  const index = hexVal.startsWith('#') ? 1 : 0;
+  if (hexVal.length - index === 6) {
+    return hexVal;
+  }
+  for (const ch of hexVal.slice(index)) {
+    sixHex = sixHex + ch + ch;
+  }
+  return sixHex;
+};
+
+const isPartialHexInput = value => {
+  const partialHexPattern = RegExp(`^#([a-fA-F0-9]{0,2}|[a-fA-F0-9]{4,5})$|
+  ^([a-fA-F0-9]{1,2}|[a-fA-F0-9]{4,5})$`);
+  return partialHexPattern.test(value);
+};
+
+// Convert any string to a valid hex color
+const stringToColour = str => {
+  var hash = 0;
+  for (var i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  var colour = '#';
+  for (i = 0; i < 3; i++) {
+    var value = (hash >> (i * 8)) & 0xFF;
+    colour += ('00' + value.toString(16)).substr(-2);
+  }
+  return colour;
+};
+
+export default function Picker({pickerName, pickerInstance, values, colorUtil}) {
   const [inputSelected, setInputSelected] = useState(false);
   const [temp, setTemp] = useState(null);
   const [colorName, setColorName] = useState("Red");
@@ -12,73 +53,43 @@ export default function Picker({pickerName, pickerInstance, values}) {
   const [hsl, setHsl] = useState(values.hsl);
 
   const colorPicker = useRef();
-  const colorContainer = useRef();
   const red = useRef();
+  const green = useRef();
+  const blue = useRef();
 
-  const updateColorName = useCallback(async () => {
-    const color = await colorUtil.getColor(values.hex);
-    setColorName(color.colors[0].name);
-  }, [colorUtil]);
+  const updateColorName = useCallback(() => {
+    const longHex = convertShortHexToLongHex(values.hex);
+    let color = colorUtil.getColor(longHex);
+    color = color === undefined ? colorUtil.getNearestColor(longHex).name : color.name;
+    setColorName(color);
+  }, [colorUtil, values]);
 
-  const updateRgb = tempRgb => {
+  const updateRgb = useCallback(tempRgb => {
     setRgb(tempRgb);
     pickerInstance.color.set(tempRgb);
     setHex(values.hex);
     setHsl(values.hsl);
-  };
+  }, [pickerInstance.color, values.hex, values.hsl]);
 
-  const updateHsl = tempHsl => {
+  const updateHsl = useCallback(tempHsl => {
     setHsl(tempHsl);
     pickerInstance.color.set(tempHsl);
     setHex(values.hex);
     setRgb(values.rgb);
-  };
+  }, [pickerInstance.color, values.hex, values.rgb]);
 
-  const updateHex = tempHex => {
+  const updateHex = useCallback(tempHex => {
     setHex(tempHex);
     if (!isPartialHexInput(tempHex)) {
       pickerInstance.color.set(tempHex);
       setRgb(values.rgb);
       setHsl(values.hsl);
     }
-  };
+  }, [pickerInstance.color, values.rgb, values.hsl]);
 
-  // Convert any string to a valid hex color
-  const stringToColour = str => {
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    var colour = '#';
-    for (i = 0; i < 3; i++) {
-      var value = (hash >> (i * 8)) & 0xFF;
-      colour += ('00' + value.toString(16)).substr(-2);
-    }
-    return colour;
-  }
 
-  const hslRgbPattern = RegExp('^[0-9]{1,3}$');
-  const isInvalidInput = value => {
-    return !hslRgbPattern.test(value) ||
-            (value.startsWith('0') && value.length > 1);
-  };
 
-  const hexPattern = RegExp('^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$');
-  const isInvalidHexInput = value => {
-    return !hexPattern.test(value);
-  };
-
-  const partialHexPattern = RegExp(`^#([a-fA-F0-9]{0,2}|[a-fA-F0-9]{4,5})$|
-                              ^([a-fA-F0-9]{1,2}|[a-fA-F0-9]{4,5})$`);
-  const isPartialHexInput = value => {
-    return partialHexPattern.test(value);
-  };
-
-  const outOfBounds = (value, max) => {
-    return parseInt(value, 10) > max;
-  };
-
-  const handleSelect = e => {
+  const handleSelect = useCallback(e => {
     const selection = document.getSelection ?
                         document.getSelection().toString() :
                         document.selection.createRange().toString();
@@ -87,18 +98,21 @@ export default function Picker({pickerName, pickerInstance, values}) {
     } else if (inputSelected) {
       setInputSelected(false);
     }
-  }
+  }, [inputSelected]);
 
-  const handleKeyDown = e => {
+  const handleKeyDown = useCallback(e => {
     const index = e.target.selectionStart;
     if (e.target.value === '0' &&
       ((e.key === 'Backspace' && index === 1) ||
       (e.key === 'Delete' && index === 0))) {
       e.target.value = '';
     }
-  }
+  }, []);
 
-  const handleKeyPress = max => e => {
+  const handleKeyPress = useCallback(max => e => {
+    const outOfBounds = (value, max) => {
+      return parseInt(value, 10) > max;
+    };
     var value = e.target.value;
     if (inputSelected && /[0-9]/.test(e.key)) {
       setInputSelected(false);
@@ -127,9 +141,9 @@ export default function Picker({pickerName, pickerInstance, values}) {
         e.target.value = '0';
       }
     }
-  };
+  }, [inputSelected]);
 
-  const handleHexKeyPress = e => {
+  const handleHexKeyPress = useCallback(e => {
     var value = e.target.value;
     const index = e.target.selectionStart;
     if (inputSelected && /[#a-fA-F0-9]/.test(e.key)) {
@@ -165,23 +179,23 @@ export default function Picker({pickerName, pickerInstance, values}) {
         e.target.value = '#FFFFFF';
       }
     }
-  };
+  }, [inputSelected]);
 
-  const handleBlur = e => {
+  const handleBlur = useCallback(e => {
     var value = e.target.value;
     if (value === '') {
       e.target.value = '0';
     }
-  };
+  }, []);
 
-  const handleHexBlur = e => {
+  const handleHexBlur = useCallback(e => {
     var value = e.target.value;
     if (value === '') {
       e.target.value = '#FFFFFF';
     }
-  }
+  }, []);
 
-  const handleRgbChange = prop => e => {
+  const handleRgbChange = useCallback(prop => e => {
     if (temp !== null) {
       e.target.value = temp;
       setTemp(null);
@@ -190,9 +204,9 @@ export default function Picker({pickerName, pickerInstance, values}) {
     var tempRgb = values.rgb;
     tempRgb[prop] = value;
     updateRgb(tempRgb);
-  }
+  }, [temp, values.rgb, updateRgb]);
 
-  const handleHslChange = prop => e => {
+  const handleHslChange = useCallback(prop => e => {
     if (temp !== null) {
       e.target.value = temp;
       setTemp(null);
@@ -201,42 +215,39 @@ export default function Picker({pickerName, pickerInstance, values}) {
     var tempHsl = values.hsl;
     tempHsl[prop] = value;
     updateHsl(tempHsl);
-  }
+  }, [temp, values.hsl, updateHsl]);
 
-  const handleHexChange = e => {
+  const handleHexChange = useCallback(e => {
     if (temp !== null) {
       e.target.value = temp;
       setTemp(null);
     }
     var value = e.target.value === '' ? '#000' : e.target.value;
     updateHex(value);
-  }
-
-  const hasColorChanged = () => {
-    return values.rgb.r !== red.current.value;
-  }
+  }, [temp, updateHex]);
 
   useEffect(() => {
+    const updateValues = () => {
+      setHex(values.hex);
+      setRgb(values.rgb);
+      setHsl(values.hsl);
+      updateColorName();
+    }
+    let isColorChanging = false;
     const handleMouseDown = e => {
-      if (colorPicker.current.contains(e.target) && hasColorChanged()) {
-        updateColorName();
-        setHex(values.hex);
-        setRgb(values.rgb);
-        setHsl(values.hsl);
+      if (colorPicker.current.contains(e.target)) {
+        updateValues();
+        isColorChanging = true;
       }
     };
     const handleMouseMove = e => {
-      if (!colorContainer.current.contains(e.target) && hasColorChanged()) {
-        setHex(values.hex);
+      if (isColorChanging) {
+        updateValues();
       }
     };
     const handleMouseUp = e => {
-      // Activates when dragging on widget
-      if (hasColorChanged()) {
-        console.log("color has changed");
-        updateColorName();
-        setRgb(values.rgb);
-        setHsl(values.hsl);
+      if (isColorChanging) {
+        isColorChanging = false;
       }
     }
 
@@ -248,15 +259,13 @@ export default function Picker({pickerName, pickerInstance, values}) {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     }
-  }, [updateColorName]);
+  }, [updateColorName, values]);
 
   return (
     <div className="picker">
-      <div className={pickerName} ref={colorPicker} />
+      <div className={pickerName} ref={colorPicker}/>
       <div className="colorValues">
-        <div className="color-container" ref={colorContainer}
-          style={{backgroundColor: hex}}
-        >
+        <div className="color-container" style={{backgroundColor: hex}}>
           <div className="string-container">
             <div id="string-label">
               name:&nbsp;
@@ -328,7 +337,7 @@ export default function Picker({pickerName, pickerInstance, values}) {
             </div>
             <div>
               g:&nbsp;
-              <input type="text" value={rgb.g} maxLength="3"
+              <input ref={green} type="text" value={rgb.g} maxLength="3"
                 onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
@@ -338,7 +347,7 @@ export default function Picker({pickerName, pickerInstance, values}) {
             </div>
             <div>
               b:&nbsp;
-              <input type="text" value={rgb.b} maxLength="3"
+              <input ref={blue} type="text" value={rgb.b} maxLength="3"
                 onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
