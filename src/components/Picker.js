@@ -1,17 +1,27 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
 import './Picker.css';
 
+// Check for invalid HSL and RGB input
 const isInvalidInput = value => {
   const hslRgbPattern = RegExp('^[0-9]{1,3}$');
   return !hslRgbPattern.test(value) ||
   (value.startsWith('0') && value.length > 1);
 };
 
+// Check for invalid Hex input
 const isInvalidHexInput = value => {
   const hexPattern = RegExp('^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$');
   return !hexPattern.test(value);
 };
 
+// Check for partial hex input
+const isPartialHexInput = value => {
+  const partialHexPattern = RegExp(`^#([a-fA-F0-9]{0,2}|[a-fA-F0-9]{4,5})$|
+  ^([a-fA-F0-9]{1,2}|[a-fA-F0-9]{4,5})$`);
+  return partialHexPattern.test(value);
+};
+
+// Convert short hex to long hex when using color names
 const convertShortHexToLongHex = hexVal => {
   var longHex = "#";
   const index = hexVal.startsWith('#') ? 1 : 0;
@@ -24,12 +34,7 @@ const convertShortHexToLongHex = hexVal => {
   return longHex;
 };
 
-const isPartialHexInput = value => {
-  const partialHexPattern = RegExp(`^#([a-fA-F0-9]{0,2}|[a-fA-F0-9]{4,5})$|
-                              ^([a-fA-F0-9]{1,2}|[a-fA-F0-9]{4,5})$`);
-  return partialHexPattern.test(value);
-};
-
+// Determine if document has a selection
 const hasSelection = e => {
   const selection = document.getSelection ?
                       document.getSelection().toString() :
@@ -58,15 +63,19 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
   const [rgb, setRgb] = useState(values.rgb);
   const [hsl, setHsl] = useState(values.hsl);
 
+  // Ref for event handling in useEffect
   const colorPicker = useRef();
 
+  // Update the color name when necessary
   const updateColorName = useCallback(() => {
     const longHex = convertShortHexToLongHex(values.hex);
     let color = colorUtil.getColor(longHex);
+    // Use the nearest color name if not defined
     color = color === undefined ? colorUtil.getNearestColor(longHex).name : color.name;
     setColorName(color);
   }, [colorUtil, values]);
 
+  // Update Hex, RGB, and HSL in component as well as the widget
   const updateRgb = useCallback(tempRgb => {
     setRgb(tempRgb);
     pickerInstance.color.set(tempRgb);
@@ -83,13 +92,15 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
 
   const updateHex = useCallback(tempHex => {
     setHex(tempHex);
-    if (!isPartialHexInput(tempHex)) {
+    // Do not update other values unless hex is valid
+    if (!isInvalidHexInput(tempHex)) {
       pickerInstance.color.set(tempHex);
       setRgb(values.rgb);
       setHsl(values.hsl);
     }
   }, [pickerInstance.color, values.rgb, values.hsl]);
 
+  // On key down, handle backspace and delete properly
   const handleKeyDown = useCallback(e => {
     const index = e.target.selectionStart;
     if (e.target.value === '0' &&
@@ -102,31 +113,36 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
   const handleNamePress = useCallback(e => {
   }, []);
 
+  // On input key press, perform validation for on change event
   const handleKeyPress = useCallback(max => e => {
     const outOfBounds = (value, max) => {
       return parseInt(value, 10) > max;
     };
     var value = e.target.value;
+    // If selected and valid key
     if (hasSelection() && /[0-9]/.test(e.key)) {
       return;
     }
+    // If has a value
     if (value !== '') {
+      // Validate the key entered; otherwise prevent input
       if (!/[0-9]/.test(e.key)) {
         e.preventDefault();
         return;
       }
+      // Generate the temp value based on where selection started
       var digits = [...value];
       const index = e.target.selectionStart;
       digits.splice(index, 0, e.key);
       var tempValue = digits.join('');
+      // If the temp value is invalid, prevent input
       if (isInvalidInput(tempValue) ||
           (value.length === 2 && outOfBounds(tempValue, max))) {
         e.preventDefault();
         return;
       }
-      else {
-        setTemp(tempValue);
-      }
+      // Valid temp value; set the temp
+      setTemp(tempValue);
     }
     else {
       if (e.key === 'Enter') {
@@ -138,31 +154,36 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
   const handleHexKeyPress = useCallback(e => {
     var value = e.target.value;
     const index = e.target.selectionStart;
+    // If selected and valid key
     if (hasSelection && /[#a-fA-F0-9]/.test(e.key)) {
       if (e.key === '#' && index !== 0) {
         e.preventDefault();
       }
       return;
     }
+    // If has a value
     if (value !== '') {
+      // Validate the key entered; otherwise prevent input
       if (!/[#a-fA-F0-9]/.test(e.key)) {
         e.preventDefault();
         return;
       }
+      // Generate the temp value based on where selection started
       var hexValues = [...value];
+      // Validate that # starts on the 0th index
       if (e.key === '#' && index !== 0) {
         e.preventDefault();
         return;
       }
       hexValues.splice(index, 0, e.key);
       var tempValue = hexValues.join('');
+      // If the temp value is invalid, prevent input
       if (isInvalidHexInput(tempValue) && !isPartialHexInput(tempValue)) {
         e.preventDefault();
         return;
       }
-      else {
-        setTemp(tempValue);
-      }
+      // Valid temp value; set the temp
+      setTemp(tempValue);
     }
     else {
       if (e.key === 'Enter') {
@@ -171,6 +192,7 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     }
   }, []);
 
+  // On out of focus and value is empty string, set to default value
   const handleBlur = useCallback(e => {
     var value = e.target.value;
     if (value === '') {
@@ -185,6 +207,7 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     }
   }, []);
 
+  // On change, update Hex, RGB, and HSL values
   const handleRgbChange = useCallback(prop => e => {
     if (temp !== null) {
       e.target.value = temp;
@@ -194,7 +217,8 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     var tempRgb = values.rgb;
     tempRgb[prop] = value;
     updateRgb(tempRgb);
-  }, [temp, values.rgb, updateRgb]);
+    updateColorName();
+  }, [temp, values.rgb, updateRgb, updateColorName]);
 
   const handleHslChange = useCallback(prop => e => {
     if (temp !== null) {
@@ -205,7 +229,8 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     var tempHsl = values.hsl;
     tempHsl[prop] = value;
     updateHsl(tempHsl);
-  }, [temp, values.hsl, updateHsl]);
+    updateColorName();
+  }, [temp, values.hsl, updateHsl, updateColorName]);
 
   const handleHexChange = useCallback(e => {
     if (temp !== null) {
@@ -214,15 +239,18 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     }
     var value = e.target.value === '' ? '#000' : e.target.value;
     updateHex(value);
-  }, [temp, updateHex]);
+    updateColorName();
+  }, [temp, updateHex, updateColorName]);
 
   useEffect(() => {
+    // Define update values
     const updateValues = () => {
       setHex(values.hex);
       setRgb(values.rgb);
       setHsl(values.hsl);
       updateColorName();
     }
+    // Define mouse events
     let isColorChanging = false;
     const handleMouseDown = e => {
       if (colorPicker.current.contains(e.target)) {
@@ -240,7 +268,7 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
         isColorChanging = false;
       }
     }
-
+    // Add the event listeners
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
@@ -255,7 +283,7 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     <div className="picker">
       <div className={pickerName} ref={colorPicker}/>
       <div className="colorValues">
-        <div className="color-container" style={{backgroundColor: hex}}>
+        <div className="color-container" style={{backgroundColor: values.hex}}>
           <div className="string-container">
             <div id="string-label">
               name:&nbsp;
