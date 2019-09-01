@@ -30,6 +30,13 @@ const isPartialHexInput = value => {
   return partialHexPattern.test(value);
 };
 
+const hasSelection = e => {
+  const selection = document.getSelection ?
+                      document.getSelection().toString() :
+                      document.selection.createRange().toString();
+  return selection.length > 0;
+};
+
 // Convert any string to a valid hex color
 const stringToColour = str => {
   var hash = 0;
@@ -52,9 +59,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
   const [hsl, setHsl] = useState(values.hsl);
 
   const colorPicker = useRef();
-  const red = useRef();
-  const green = useRef();
-  const blue = useRef();
 
   const updateColorName = useCallback(() => {
     const longHex = convertShortHexToLongHex(values.hex);
@@ -85,13 +89,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
       setHsl(values.hsl);
     }
   }, [pickerInstance.color, values.rgb, values.hsl]);
-
-  const hasSelection = useCallback(e => {
-    const selection = document.getSelection ?
-                        document.getSelection().toString() :
-                        document.selection.createRange().toString();
-    return selection.length > 0;
-  }, []);
 
   const handleKeyDown = useCallback(e => {
     const index = e.target.selectionStart;
@@ -136,7 +133,7 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
         e.target.value = '0';
       }
     }
-  }, [hasSelection]);
+  }, []);
 
   const handleHexKeyPress = useCallback(e => {
     var value = e.target.value;
@@ -172,7 +169,7 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
         e.target.value = '#FFFFFF';
       }
     }
-  }, [hasSelection]);
+  }, []);
 
   const handleBlur = useCallback(e => {
     var value = e.target.value;
@@ -315,7 +312,7 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
             rgb({rgb.r}, {rgb.g}, {rgb.b})
             <div>
               r:&nbsp;
-              <input ref={red} type="text" value={rgb.r} maxLength="3"
+              <input type="text" value={rgb.r} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
                 onBlur={handleBlur}
@@ -324,7 +321,7 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
             </div>
             <div>
               g:&nbsp;
-              <input ref={green} type="text" value={rgb.g} maxLength="3"
+              <input type="text" value={rgb.g} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
                 onBlur={handleBlur}
@@ -333,7 +330,7 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
             </div>
             <div>
               b:&nbsp;
-              <input ref={blue} type="text" value={rgb.b} maxLength="3"
+              <input type="text" value={rgb.b} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
                 onBlur={handleBlur}
