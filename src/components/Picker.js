@@ -1,5 +1,11 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
+import Clipboard from 'clipboard';
+import clippy from '../assets/clippy.svg';
 import './Picker.css';
+
+// Initialize copy to clipboard buttons
+new Clipboard('.clip-name');
+new Clipboard('.clip-hex');
 
 // Check for invalid HSL and RGB input
 const isInvalidInput = value => {
@@ -293,6 +299,9 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
                 onBlur={() => {return}}
                 onChange={() => {return}}
               />
+              <button className="clip-name" data-clipboard-target="#string-label input">
+                <img width="14" src={clippy} alt="Copy" />
+              </button>
             </div>
           </div>
           <div className="hex-container">
@@ -304,6 +313,9 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
                 onBlur={handleHexBlur}
                 onChange={handleHexChange}
               />
+              <button className="clip-hex" data-clipboard-target="#hex-label input">
+                <img width="14" src={clippy} alt="Copy" />
+              </button>
             </div>
           </div>
           <div className="hsl-container">

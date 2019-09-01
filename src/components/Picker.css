@@ -18,7 +18,8 @@
 }
 
 .color-container {
-  width: 178px;
+  /* change */
+  width: 220px;
   padding: 10px 15px;
   font-family: 'Consolas', 'Courier New', Courier, monospace;
   font-size: 16px;
@@ -35,10 +36,51 @@ input {
   font-size: inherit;
 }
 
+.hex-container {
+  height: 30px;
+}
+
+#string-label, #hex-label {
+  height: 26px;
+  padding: 2px 0;
+}
+
 #string-label input {
-  width: 13ch;
+  width: 14ch;
+  padding: 2.5px 2px;
+}
+
+.clip-name {
+  vertical-align: middle;
+  padding: 4px 6px 2px 6px;
+  height: 27px;
+  margin-bottom: 2.5px;
+  outline: 0;
+  background-color: #eee;
+  background-image: linear-gradient(#fcfcfc,#eee);
+  border: 1px solid rgba(27,31,35,.2);
 }
 
 #hex-label input {
   width: 7.5ch;
+  padding: 2.5px 3px;
+}
+
+.clip-hex {
+  vertical-align: middle;
+  padding: 4px 6px 2px 6px;
+  height: 27px;
+  margin-bottom: 2.5px;
+  outline: 0;
+  background-color: #eee;
+  background-image: linear-gradient(#fcfcfc,#eee);
+  border: 1px solid rgba(27,31,35,.2);
+}
+
+.clip-name:hover, .clip-hex:hover {
+  background-image: linear-gradient(#fafafa,#ccc);
+}
+
+.clip-name:active, .clip-hex:active {
+  background-image: linear-gradient(#eaeaea,#aaa);
 }
