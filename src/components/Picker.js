@@ -13,20 +13,20 @@ const isInvalidHexInput = value => {
 };
 
 const convertShortHexToLongHex = hexVal => {
-  var sixHex = "#";
+  var longHex = "#";
   const index = hexVal.startsWith('#') ? 1 : 0;
   if (hexVal.length - index === 6) {
     return hexVal;
   }
-  for (const ch of hexVal.slice(index)) {
-    sixHex = sixHex + ch + ch;
+  for (var ch of hexVal.slice(index)) {
+    longHex += ch + ch;
   }
-  return sixHex;
+  return longHex;
 };
 
 const isPartialHexInput = value => {
   const partialHexPattern = RegExp(`^#([a-fA-F0-9]{0,2}|[a-fA-F0-9]{4,5})$|
-  ^([a-fA-F0-9]{1,2}|[a-fA-F0-9]{4,5})$`);
+                              ^([a-fA-F0-9]{1,2}|[a-fA-F0-9]{4,5})$`);
   return partialHexPattern.test(value);
 };
 
@@ -45,7 +45,6 @@ const stringToColour = str => {
 };
 
 export default function Picker({pickerName, pickerInstance, values, colorUtil}) {
-  const [inputSelected, setInputSelected] = useState(false);
   const [temp, setTemp] = useState(null);
   const [colorName, setColorName] = useState("Red");
   const [hex, setHex] = useState(values.hex);
@@ -87,18 +86,12 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     }
   }, [pickerInstance.color, values.rgb, values.hsl]);
 
-
-
-  const handleSelect = useCallback(e => {
+  const hasSelection = useCallback(e => {
     const selection = document.getSelection ?
                         document.getSelection().toString() :
                         document.selection.createRange().toString();
-    if (selection.length > 0 && !inputSelected) {
-      setInputSelected(true);
-    } else if (inputSelected) {
-      setInputSelected(false);
-    }
-  }, [inputSelected]);
+    return selection.length > 0;
+  }, []);
 
   const handleKeyDown = useCallback(e => {
     const index = e.target.selectionStart;
@@ -109,13 +102,15 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     }
   }, []);
 
+  const handleNamePress = useCallback(e => {
+  }, []);
+
   const handleKeyPress = useCallback(max => e => {
     const outOfBounds = (value, max) => {
       return parseInt(value, 10) > max;
     };
     var value = e.target.value;
-    if (inputSelected && /[0-9]/.test(e.key)) {
-      setInputSelected(false);
+    if (hasSelection() && /[0-9]/.test(e.key)) {
       return;
     }
     if (value !== '') {
@@ -141,17 +136,15 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
         e.target.value = '0';
       }
     }
-  }, [inputSelected]);
+  }, [hasSelection]);
 
   const handleHexKeyPress = useCallback(e => {
     var value = e.target.value;
     const index = e.target.selectionStart;
-    if (inputSelected && /[#a-fA-F0-9]/.test(e.key)) {
+    if (hasSelection && /[#a-fA-F0-9]/.test(e.key)) {
       if (e.key === '#' && index !== 0) {
         e.preventDefault();
-        return;
       }
-      setInputSelected(false);
       return;
     }
     if (value !== '') {
@@ -179,7 +172,7 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
         e.target.value = '#FFFFFF';
       }
     }
-  }, [inputSelected]);
+  }, [hasSelection]);
 
   const handleBlur = useCallback(e => {
     var value = e.target.value;
@@ -270,7 +263,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
             <div id="string-label">
               name:&nbsp;
               <input type="text" value={colorName} maxLength="40"
-                onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={() => {return}}
                 onBlur={() => {return}}
@@ -282,7 +274,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
             <div id="hex-label">
               hex:&nbsp;
               <input type="text" value={hex} maxLength="7"
-                onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleHexKeyPress}
                 onBlur={handleHexBlur}
@@ -295,7 +286,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
             <div>
               h:&nbsp;
               <input type="text" value={hsl.h} maxLength="3"
-                onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(360)}
                 onBlur={handleBlur}
@@ -305,7 +295,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
             <div>
               s:&nbsp;
               <input type="text" value={hsl.s} maxLength="3"
-                onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(100)}
                 onBlur={handleBlur}
@@ -315,7 +304,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
             <div>
               l:&nbsp;
               <input type="text" value={hsl.l} maxLength="3"
-                onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(100)}
                 onBlur={handleBlur}
@@ -328,7 +316,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
             <div>
               r:&nbsp;
               <input ref={red} type="text" value={rgb.r} maxLength="3"
-                onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
                 onBlur={handleBlur}
@@ -338,7 +325,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
             <div>
               g:&nbsp;
               <input ref={green} type="text" value={rgb.g} maxLength="3"
-                onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
                 onBlur={handleBlur}
@@ -348,7 +334,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
             <div>
               b:&nbsp;
               <input ref={blue} type="text" value={rgb.b} maxLength="3"
-                onSelect={handleSelect}
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
                 onBlur={handleBlur}
