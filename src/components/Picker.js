@@ -41,25 +41,25 @@ const convertShortHexToLongHex = hexVal => {
 };
 
 // Determine if document has a selection
-const hasSelection = e => {
-  const selection = document.getSelection ?
+const hasSelection = () => {
+  const selection = document.getSelection() ?
                       document.getSelection().toString() :
                       document.selection.createRange().toString();
   return selection.length > 0;
 };
 
 // Convert any string to a valid hex color
-const stringToColour = str => {
+const stringToColor = str => {
   var hash = 0;
   for (var i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
-  var colour = '#';
+  var color = '#';
   for (i = 0; i < 3; i++) {
     var value = (hash >> (i * 8)) & 0xFF;
-    colour += ('00' + value.toString(16)).substr(-2);
+    color += ('00' + value.toString(16)).substr(-2);
   }
-  return colour;
+  return color;
 };
 
 export default function Picker({pickerName, pickerInstance, values, colorUtil}) {
@@ -116,9 +116,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     }
   }, []);
 
-  const handleNamePress = useCallback(e => {
-  }, []);
-
   // On input key press, perform validation for on change event
   const handleKeyPress = useCallback(max => e => {
     const outOfBounds = (value, max) => {
@@ -129,10 +126,10 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     if (hasSelection() && /[0-9]/.test(e.key)) {
       return;
     }
-    // If has a value
+    // If input has characters
     if (value !== '') {
       // Validate the key entered; otherwise prevent input
-      if (!/[0-9]/.test(e.key)) {
+      if (!/[0-9]/.test(e.key) || e.key === 'Enter') {
         e.preventDefault();
         return;
       }
@@ -150,10 +147,36 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
       // Valid temp value; set the temp
       setTemp(tempValue);
     }
-    else {
-      if (e.key === 'Enter') {
-        e.target.value = '0';
+  }, []);
+
+  const handleNamePress = useCallback(e => {
+    var value = e.target.value;
+    // If there is a selection allow input
+    if (hasSelection()) {
+      // If replacing entire input, make sure key is upper case
+      if (document.getSelection().toString() === value) {
+        e.key = e.key.toUpperCase();
+        setTemp(e.key);
       }
+      return;
+    }
+    // If input has characters
+    if (value !== '') {
+      // Only allow these characters for naming conventions
+      if (!/[a-zA-Z0-9!@#$%^&*)(+=._-\s]/.test(e.key) || e.key === 'Enter') {
+        e.preventDefault();
+        return;
+      }
+      // Generate the temp value based on where selection started
+      var chars = [...value];
+      const index = e.target.selectionStart;
+      // If first char, make it upper case
+      if (index === 0 && /[a-z]/.test(e.key)) {
+        e.key = e.key.toUpperCase();
+      }
+      chars.splice(index, 0, e.key);
+      var tempValue = chars.join('');
+      setTemp(tempValue);
     }
   }, []);
 
@@ -161,16 +184,16 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     var value = e.target.value;
     const index = e.target.selectionStart;
     // If selected and valid key
-    if (hasSelection && /[#a-fA-F0-9]/.test(e.key)) {
+    if (hasSelection() && /[#a-fA-F0-9]/.test(e.key)) {
       if (e.key === '#' && index !== 0) {
         e.preventDefault();
       }
       return;
     }
-    // If has a value
+    // If input has characters
     if (value !== '') {
       // Validate the key entered; otherwise prevent input
-      if (!/[#a-fA-F0-9]/.test(e.key)) {
+      if (!/[#a-fA-F0-9]/.test(e.key) || e.key === 'Enter') {
         e.preventDefault();
         return;
       }
@@ -191,11 +214,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
       // Valid temp value; set the temp
       setTemp(tempValue);
     }
-    else {
-      if (e.key === 'Enter') {
-        e.target.value = '#FFFFFF';
-      }
-    }
   }, []);
 
   // On out of focus and value is empty string, set to default value
@@ -212,6 +230,10 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
       e.target.value = '#FFFFFF';
     }
   }, []);
+
+  const handleNameBlur = useCallback(e => {
+    updateColorName();
+  }, [updateColorName])
 
   // On change, update Hex, RGB, and HSL values
   const handleRgbChange = useCallback(prop => e => {
@@ -247,6 +269,21 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     updateHex(value);
     updateColorName();
   }, [temp, updateHex, updateColorName]);
+
+  const handleNameChange = useCallback(e => {
+    const index = e.target.selectionStart;
+    if (temp !== null) {
+      e.target.value = temp;
+      setTemp(null);
+    }
+    var value = e.target.value === '' ? 'Black' : e.target.value;
+    const color = colorUtil.getHex(value);
+    let hexFromName = color === undefined ? stringToColor(value) : color.hex;
+    updateHex(hexFromName);
+    setColorName(value);
+    e.target.selectionStart = index;
+    e.target.selectionEnd = index;
+  }, [temp, updateHex, colorUtil])
 
   useEffect(() => {
     // Define update values
@@ -290,16 +327,16 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
       <div className={pickerName} ref={colorPicker}/>
       <div className="colorValues">
         <div className="color-container" style={{backgroundColor: values.hex}}>
-          <div className="string-container">
-            <div id="string-label">
+          <div className="name-container">
+            <div id="name-label">
               name:&nbsp;
               <input type="text" value={colorName} maxLength="40"
                 onKeyDown={handleKeyDown}
-                onKeyPress={() => {return}}
-                onBlur={() => {return}}
-                onChange={() => {return}}
+                onKeyPress={handleNamePress}
+                onBlur={handleNameBlur}
+                onChange={handleNameChange}
               />
-              <button className="clip-name" data-clipboard-target="#string-label input">
+              <button className="clip-name" data-clipboard-target="#name-label input">
                 <img width="14" src={clippy} alt="Copy" />
               </button>
             </div>

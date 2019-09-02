@@ -40,12 +40,12 @@ input {
   height: 30px;
 }
 
-#string-label, #hex-label {
+#name-label, #hex-label {
   height: 26px;
   padding: 2px 0;
 }
 
-#string-label input {
+#name-label input {
   width: 14ch;
   padding: 2.5px 2px;
 }

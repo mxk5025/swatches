@@ -18,6 +18,11 @@ export default class ColorUtil {
     return this.namedColors.find(color => color.hex === hex);
   }
 
+  // Get the exact hex from a color's name
+  getHex(colorName) {
+    return this.namedColors.find(color => color.name === colorName);
+  }
+
   // Get the nearest color using a hex color code with '#' prepended
   getNearestColor(hex) {
     return this.nearestColors(hex);
