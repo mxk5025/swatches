@@ -2,6 +2,11 @@ import React, {useState, useEffect, useCallback, useRef} from 'react';
 import clippy from '../assets/clippy.svg';
 import './Picker.css';
 
+// Check if value exceeds max
+const outOfBounds = (value, max) => {
+  return parseInt(value, 10) > max;
+};
+
 // Check for invalid HSL and RGB input
 const isInvalidInput = value => {
   const hslRgbPattern = RegExp('^[0-9]{1,3}$');
@@ -58,8 +63,8 @@ const stringToColor = str => {
 };
 
 export default function Picker({id, pickerInstance, values, colorUtil}) {
-  const [temp, setTemp] = useState(null);
-  const [colorName, setColorName] = useState("Red");
+  const [temp, setTemp] = useState('');
+  const [colorName, setColorName] = useState('Red');
   const [hex, setHex] = useState(values.hex);
   const [rgb, setRgb] = useState(values.rgb);
   const [hsl, setHsl] = useState(values.hsl);
@@ -113,21 +118,18 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
 
   // On input key press, perform validation for on change event
   const handleKeyPress = useCallback(max => e => {
-    const outOfBounds = (value, max) => {
-      return parseInt(value, 10) > max;
-    };
     var value = e.target.value;
     // If selected and valid key
     if (hasSelection() && /[0-9]/.test(e.key)) {
       return;
     }
+    // Validate the key entered; otherwise prevent input
+    if (!/[0-9]/.test(e.key) || e.key === 'Enter') {
+      e.preventDefault();
+      return;
+    }
     // If input has characters
     if (value !== '') {
-      // Validate the key entered; otherwise prevent input
-      if (!/[0-9]/.test(e.key) || e.key === 'Enter') {
-        e.preventDefault();
-        return;
-      }
       // Generate the temp value based on where selection started
       var digits = [...value];
       const index = e.target.selectionStart;
@@ -148,27 +150,27 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
     var value = e.target.value;
     // If there is a selection allow input
     if (hasSelection()) {
-      // If replacing entire input, make sure key is upper case
-      if (document.getSelection().toString() === value) {
-        e.key = e.key.toUpperCase();
-        setTemp(e.key);
-      }
+      // // If replacing entire input, make sure key is upper case
+      // if (document.getSelection().toString() === value) {
+      //   e.key = e.key.toUpperCase();
+      //   setTemp(e.key);
+      // }
+      return;
+    }
+    // Only allow these characters for naming conventions
+    if (!/[a-zA-Z0-9!@#$%^&*)(+=._-\s]/.test(e.key) || e.key === 'Enter') {
+      e.preventDefault();
       return;
     }
     // If input has characters
     if (value !== '') {
-      // Only allow these characters for naming conventions
-      if (!/[a-zA-Z0-9!@#$%^&*)(+=._-\s]/.test(e.key) || e.key === 'Enter') {
-        e.preventDefault();
-        return;
-      }
       // Generate the temp value based on where selection started
       var chars = [...value];
       const index = e.target.selectionStart;
-      // If first char, make it upper case
-      if (index === 0 && /[a-z]/.test(e.key)) {
-        e.key = e.key.toUpperCase();
-      }
+      // // If first char, make it upper case
+      // if (index === 0 && /[a-z]/.test(e.key)) {
+      //   e.key = e.key.toUpperCase();
+      // }
       chars.splice(index, 0, e.key);
       var tempValue = chars.join('');
       setTemp(tempValue);
@@ -209,28 +211,75 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
       // Valid temp value; set the temp
       setTemp(tempValue);
     }
+    else if (e.key !== '#') {
+      e.preventDefault();
+    }
   }, []);
+
+  // On paste, validate that the text data is within bounds for RGB and HSL
+  const handlePaste = useCallback(max => e => {
+    const textData = e.clipboardData.getData('text');
+    // Text data must be a number
+    if (Number.isNaN(parseInt(textData, 10))) {
+      e.preventDefault();
+      return;
+    }
+    var value = e.target.value;
+    const index = e.target.selectionStart;
+    const count = e.target.selectionEnd - index;
+    var digits = [...value];
+    digits.splice(index, count, textData);
+    var tempValue = digits.join('');
+    // Prevent if out of bounds
+    if (outOfBounds(tempValue, max)) {
+      e.preventDefault();
+      return;
+    }
+    setTemp(tempValue);
+  }, []);
+
+  // On paste, validate that the resulting input is a valid or partial Hex
+  const handleHexPaste = useCallback(e => {
+    const textData = e.clipboardData.getData('text');
+    // Prevent other characters
+    if (!/[#a-fA-F0-9]+/.test(textData)) {
+      e.preventDefault();
+      return;
+    }
+    var value = e.target.value;
+    const index = e.target.selectionStart;
+    const count = e.target.selectionEnd - index;
+    var chars = [...value];
+    chars.splice(index, count, textData);
+    var tempValue = chars.join('');
+    // Prevent if invalid and not a partial
+    if (isInvalidHexInput(tempValue) && !isPartialHexInput(tempValue)) {
+      e.preventDefault();
+      return;
+    }
+    setTemp(tempValue);
+  })
 
   // On out of focus and value is empty string, set to default value of 0
   const handleRgbBlur = useCallback(prop => e => {
     if (e.target.value === '') {
       e.target.value = '0';
-      var tempRgb = values.rgb;
+      var tempRgb = JSON.parse(JSON.stringify(values.rgb));
       tempRgb[prop] = e.target.value;
       updateRgb(tempRgb);
       updateColorName();
     }
-  }, []);
+  }, [values.rgb, updateRgb, updateColorName]);
 
   const handleHslBlur = useCallback(prop => e => {
     if (e.target.value === '') {
       e.target.value = '0';
-      var tempHsl = values.hsl;
+      var tempHsl = JSON.parse(JSON.stringify(values.hsl));
       tempHsl[prop] = e.target.value;
       updateHsl(tempHsl);
       updateColorName();
     }
-  }, []);
+  }, [values.hsl, updateHsl, updateColorName]);
 
   // On out of focus of color name, update to the actual color name
   const handleNameBlur = useCallback(e => {
@@ -239,26 +288,28 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
 
   // On change, update Hex, RGB, and HSL values
   const handleRgbChange = useCallback(prop => e => {
-    if (temp !== null) {
+    if (temp !== '') {
       e.target.value = temp;
-      setTemp(null);
+      setTemp('');
     }
     var value = e.target.value;
+    var tempRgb = JSON.parse(JSON.stringify(values.rgb));
+    tempRgb[prop] = value;
     if (value !== '') {
-      var tempRgb = values.rgb;
-      tempRgb[prop] = value;
       updateRgb(tempRgb);
       updateColorName();
+    } else {
+      setRgb(tempRgb);
     }
   }, [temp, values.rgb, updateRgb, updateColorName]);
 
   const handleHslChange = useCallback(prop => e => {
-    if (temp !== null) {
+    if (temp !== '') {
       e.target.value = temp;
-      setTemp(null);
+      setTemp('');
     }
     var value = e.target.value;
-    var tempHsl = values.hsl;
+    var tempHsl = JSON.parse(JSON.stringify(values.hsl));
     tempHsl[prop] = value;
     if (value !== '') {
       updateHsl(tempHsl);
@@ -269,10 +320,11 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
   }, [temp, values.hsl, updateHsl, updateColorName]);
 
   const handleHexChange = useCallback(e => {
-    if (temp !== null) {
+    if (temp !== '') {
       e.target.value = temp;
-      setTemp(null);
+      setTemp('');
     }
+    console.log(e.target.value);
     var value = e.target.value === '' ? '#000' : e.target.value;
     updateHex(value);
     updateColorName();
@@ -280,9 +332,9 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
 
   const handleNameChange = useCallback(e => {
     const index = e.target.selectionStart;
-    if (temp !== null) {
+    if (temp !== '') {
       e.target.value = temp;
-      setTemp(null);
+      setTemp('');
     }
     var value = e.target.value === '' ? 'Black' : e.target.value;
     const color = colorUtil.getHex(value);
@@ -290,10 +342,10 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
     updateHex(hexFromName);
     // Set, but do not update internal values
     setColorName(value);
-
+    // Maintain the selection index
     e.target.selectionStart = index;
     e.target.selectionEnd = index;
-  }, [temp, updateHex, colorUtil])
+  }, [temp, updateHex, colorUtil]);
 
   useEffect(() => {
     // Define update values
@@ -359,6 +411,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input id={"hex-input" + id} type="text" value={hex} maxLength="7"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleHexKeyPress}
+                onPaste={handleHexPaste}
                 onChange={handleHexChange}
               />
               <button className="clip-hex"
@@ -375,6 +428,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={hsl.h} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(360)}
+                onPaste={handlePaste(360)}
                 onBlur={handleHslBlur('h')}
                 onChange={handleHslChange('h')}
               />
@@ -384,6 +438,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={hsl.s} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(100)}
+                onPaste={handlePaste(100)}
                 onBlur={handleHslBlur('s')}
                 onChange={handleHslChange('s')}
               />
@@ -393,6 +448,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={hsl.l} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(100)}
+                onPaste={handlePaste(100)}
                 onBlur={handleHslBlur('l')}
                 onChange={handleHslChange('l')}
               />
@@ -405,6 +461,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={rgb.r} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
+                onPaste={handlePaste(255)}
                 onBlur={handleRgbBlur('r')}
                 onChange={handleRgbChange('r')}
               />
@@ -414,6 +471,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={rgb.g} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
+                onPaste={handlePaste(255)}
                 onBlur={handleRgbBlur('g')}
                 onChange={handleRgbChange('g')}
               />
@@ -423,6 +481,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={rgb.b} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
+                onPaste={handlePaste(255)}
                 onBlur={handleRgbBlur('b')}
                 onChange={handleRgbChange('b')}
               />
