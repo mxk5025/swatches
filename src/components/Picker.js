@@ -1,11 +1,6 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
-import Clipboard from 'clipboard';
 import clippy from '../assets/clippy.svg';
 import './Picker.css';
-
-// Initialize copy to clipboard buttons
-new Clipboard('.clip-name');
-new Clipboard('.clip-hex');
 
 // Check for invalid HSL and RGB input
 const isInvalidInput = value => {
@@ -62,7 +57,7 @@ const stringToColor = str => {
   return color;
 };
 
-export default function Picker({pickerName, pickerInstance, values, colorUtil}) {
+export default function Picker({id, pickerInstance, values, colorUtil}) {
   const [temp, setTemp] = useState(null);
   const [colorName, setColorName] = useState("Red");
   const [hex, setHex] = useState(values.hex);
@@ -224,13 +219,6 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     }
   }, []);
 
-  const handleHexBlur = useCallback(e => {
-    var value = e.target.value;
-    if (value === '') {
-      e.target.value = '#FFFFFF';
-    }
-  }, []);
-
   const handleNameBlur = useCallback(e => {
     updateColorName();
   }, [updateColorName])
@@ -280,7 +268,9 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
     const color = colorUtil.getHex(value);
     let hexFromName = color === undefined ? stringToColor(value) : color.hex;
     updateHex(hexFromName);
+    // Set, but do not update internal values
     setColorName(value);
+
     e.target.selectionStart = index;
     e.target.selectionEnd = index;
   }, [temp, updateHex, colorUtil])
@@ -324,19 +314,21 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
 
   return (
     <div className="picker">
-      <div className={pickerName} ref={colorPicker}/>
+      <div className={"colorPicker" + id} ref={colorPicker}/>
       <div className="colorValues">
         <div className="color-container" style={{backgroundColor: values.hex}}>
           <div className="name-container">
             <div id="name-label">
               name:&nbsp;
-              <input type="text" value={colorName} maxLength="40"
+              <input id={"name-input" + id} type="text" value={colorName} maxLength="40"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleNamePress}
                 onBlur={handleNameBlur}
                 onChange={handleNameChange}
               />
-              <button className="clip-name" data-clipboard-target="#name-label input">
+              <button className="clip-name"
+                data-clipboard-target={"#name-input" + id}
+              >
                 <img width="14" src={clippy} alt="Copy" />
               </button>
             </div>
@@ -344,13 +336,14 @@ export default function Picker({pickerName, pickerInstance, values, colorUtil}) 
           <div className="hex-container">
             <div id="hex-label">
               hex:&nbsp;
-              <input type="text" value={hex} maxLength="7"
+              <input id={"hex-input" + id} type="text" value={hex} maxLength="7"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleHexKeyPress}
-                onBlur={handleHexBlur}
                 onChange={handleHexChange}
               />
-              <button className="clip-hex" data-clipboard-target="#hex-label input">
+              <button className="clip-hex"
+                data-clipboard-target={"#hex-input" + id}
+              >
                 <img width="14" src={clippy} alt="Copy" />
               </button>
             </div>
