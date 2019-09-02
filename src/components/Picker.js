@@ -421,39 +421,6 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               </button>
             </div>
           </div>
-          <div className="hsl-container">
-            hsl({hsl.h}, {hsl.s}%, {hsl.l}%)
-            <div>
-              h:&nbsp;
-              <input type="text" value={hsl.h} maxLength="3"
-                onKeyDown={handleKeyDown}
-                onKeyPress={handleKeyPress(360)}
-                onPaste={handlePaste(360)}
-                onBlur={handleHslBlur('h')}
-                onChange={handleHslChange('h')}
-              />
-            </div>
-            <div>
-              s:&nbsp;
-              <input type="text" value={hsl.s} maxLength="3"
-                onKeyDown={handleKeyDown}
-                onKeyPress={handleKeyPress(100)}
-                onPaste={handlePaste(100)}
-                onBlur={handleHslBlur('s')}
-                onChange={handleHslChange('s')}
-              />
-            </div>
-            <div>
-              l:&nbsp;
-              <input type="text" value={hsl.l} maxLength="3"
-                onKeyDown={handleKeyDown}
-                onKeyPress={handleKeyPress(100)}
-                onPaste={handlePaste(100)}
-                onBlur={handleHslBlur('l')}
-                onChange={handleHslChange('l')}
-              />
-            </div>
-          </div>
           <div className="rgb-container">
             rgb({rgb.r}, {rgb.g}, {rgb.b})
             <div>
@@ -484,6 +451,39 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
                 onPaste={handlePaste(255)}
                 onBlur={handleRgbBlur('b')}
                 onChange={handleRgbChange('b')}
+              />
+            </div>
+          </div>
+          <div className="hsl-container">
+            hsl({hsl.h}, {hsl.s}%, {hsl.l}%)
+            <div>
+              h:&nbsp;
+              <input type="text" value={hsl.h} maxLength="3"
+                onKeyDown={handleKeyDown}
+                onKeyPress={handleKeyPress(360)}
+                onPaste={handlePaste(360)}
+                onBlur={handleHslBlur('h')}
+                onChange={handleHslChange('h')}
+              />
+            </div>
+            <div>
+              s:&nbsp;
+              <input type="text" value={hsl.s} maxLength="3"
+                onKeyDown={handleKeyDown}
+                onKeyPress={handleKeyPress(100)}
+                onPaste={handlePaste(100)}
+                onBlur={handleHslBlur('s')}
+                onChange={handleHslChange('s')}
+              />
+            </div>
+            <div>
+              l:&nbsp;
+              <input type="text" value={hsl.l} maxLength="3"
+                onKeyDown={handleKeyDown}
+                onKeyPress={handleKeyPress(100)}
+                onPaste={handlePaste(100)}
+                onBlur={handleHslBlur('l')}
+                onChange={handleHslChange('l')}
               />
             </div>
           </div>
