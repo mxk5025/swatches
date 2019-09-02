@@ -1,6 +1,7 @@
 .picker {
   display: flex;
   justify-content: center;
+  margin: 40px 2%;
 }
 
 .colorPicker {
