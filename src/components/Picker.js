@@ -104,7 +104,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
   // On key down, handle backspace and delete properly
   const handleKeyDown = useCallback(e => {
     const index = e.target.selectionStart;
-    if (e.target.value === '0' &&
+    if (e.target.value.length === 1 &&
       ((e.key === 'Backspace' && index === 1) ||
       (e.key === 'Delete' && index === 0))) {
       e.target.value = '';
@@ -211,14 +211,28 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
     }
   }, []);
 
-  // On out of focus and value is empty string, set to default value
-  const handleBlur = useCallback(e => {
-    var value = e.target.value;
-    if (value === '') {
+  // On out of focus and value is empty string, set to default value of 0
+  const handleRgbBlur = useCallback(prop => e => {
+    if (e.target.value === '') {
       e.target.value = '0';
+      var tempRgb = values.rgb;
+      tempRgb[prop] = e.target.value;
+      updateRgb(tempRgb);
+      updateColorName();
     }
   }, []);
 
+  const handleHslBlur = useCallback(prop => e => {
+    if (e.target.value === '') {
+      e.target.value = '0';
+      var tempHsl = values.hsl;
+      tempHsl[prop] = e.target.value;
+      updateHsl(tempHsl);
+      updateColorName();
+    }
+  }, []);
+
+  // On out of focus of color name, update to the actual color name
   const handleNameBlur = useCallback(e => {
     updateColorName();
   }, [updateColorName])
@@ -229,11 +243,13 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
       e.target.value = temp;
       setTemp(null);
     }
-    var value = e.target.value === '' ? '0' : e.target.value;
-    var tempRgb = values.rgb;
-    tempRgb[prop] = value;
-    updateRgb(tempRgb);
-    updateColorName();
+    var value = e.target.value;
+    if (value !== '') {
+      var tempRgb = values.rgb;
+      tempRgb[prop] = value;
+      updateRgb(tempRgb);
+      updateColorName();
+    }
   }, [temp, values.rgb, updateRgb, updateColorName]);
 
   const handleHslChange = useCallback(prop => e => {
@@ -241,11 +257,15 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
       e.target.value = temp;
       setTemp(null);
     }
-    var value = e.target.value === '' ? '0' : e.target.value;
+    var value = e.target.value;
     var tempHsl = values.hsl;
     tempHsl[prop] = value;
-    updateHsl(tempHsl);
-    updateColorName();
+    if (value !== '') {
+      updateHsl(tempHsl);
+      updateColorName();
+    } else {
+      setHsl(tempHsl);
+    }
   }, [temp, values.hsl, updateHsl, updateColorName]);
 
   const handleHexChange = useCallback(e => {
@@ -355,7 +375,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={hsl.h} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(360)}
-                onBlur={handleBlur}
+                onBlur={handleHslBlur('h')}
                 onChange={handleHslChange('h')}
               />
             </div>
@@ -364,7 +384,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={hsl.s} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(100)}
-                onBlur={handleBlur}
+                onBlur={handleHslBlur('s')}
                 onChange={handleHslChange('s')}
               />
             </div>
@@ -373,7 +393,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={hsl.l} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(100)}
-                onBlur={handleBlur}
+                onBlur={handleHslBlur('l')}
                 onChange={handleHslChange('l')}
               />
             </div>
@@ -385,7 +405,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={rgb.r} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
-                onBlur={handleBlur}
+                onBlur={handleRgbBlur('r')}
                 onChange={handleRgbChange('r')}
               />
             </div>
@@ -394,7 +414,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={rgb.g} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
-                onBlur={handleBlur}
+                onBlur={handleRgbBlur('g')}
                 onChange={handleRgbChange('g')}
               />
             </div>
@@ -403,7 +423,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
               <input type="text" value={rgb.b} maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
-                onBlur={handleBlur}
+                onBlur={handleRgbBlur('b')}
                 onChange={handleRgbChange('b')}
               />
             </div>
