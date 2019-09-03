@@ -20,7 +20,7 @@ var paletteId = 0;
 
 export default function Easel() {
   const [palettes, setPalettes] = useState([]);
-  const [currentColor, setCurrentColor] = useState(values.hex);
+  const [easelColor, setEaselColor] = useState(values.hex);
   const [currentSwatch, setCurrentSwatch] = useState(null);
 
   const addPalette = () => {
@@ -50,10 +50,9 @@ export default function Easel() {
         pickerInstance={pickerInstance}
         values={values}
         colorUtil={colorUtil}
-        setCurrentColor={setCurrentColor}
-        currentColor={currentColor}
+        setEaselColor={setEaselColor}
       />
-      <div className="palette-container">\
+      <div className="palette-container">
         {palettes.map(palette => (
           <Palette
             key={palette.id}

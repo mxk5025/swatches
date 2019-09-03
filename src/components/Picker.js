@@ -62,7 +62,7 @@ const stringToColor = str => {
   return color;
 };
 
-export default function Picker({pickerInstance, values, colorUtil, setCurrentColor}) {
+export default function Picker({pickerInstance, values, colorUtil, setEaselColor}) {
   const [temp, setTemp] = useState('');
   const [colorName, setColorName] = useState('Red');
   const [hex, setHex] = useState(values.hex);
@@ -87,16 +87,16 @@ export default function Picker({pickerInstance, values, colorUtil, setCurrentCol
     pickerInstance.color.set(tempRgb);
     setHex(values.hex);
     setHsl(values.hsl);
-    setCurrentColor(values.hex);
-  }, [pickerInstance.color, values.hex, values.hsl, setCurrentColor]);
+    setEaselColor(values.hex);
+  }, [pickerInstance.color, values.hex, values.hsl, setEaselColor]);
 
   const updateHsl = useCallback(tempHsl => {
     setHsl(tempHsl);
     pickerInstance.color.set(tempHsl);
     setHex(values.hex);
     setRgb(values.rgb);
-    setCurrentColor(values.hex);
-  }, [pickerInstance.color, values.hex, values.rgb, setCurrentColor]);
+    setEaselColor(values.hex);
+  }, [pickerInstance.color, values.hex, values.rgb, setEaselColor]);
 
   const updateHex = useCallback(tempHex => {
     setHex(tempHex);
@@ -105,9 +105,9 @@ export default function Picker({pickerInstance, values, colorUtil, setCurrentCol
       pickerInstance.color.set(tempHex);
       setRgb(values.rgb);
       setHsl(values.hsl);
-      setCurrentColor(tempHex);
+      setEaselColor(tempHex);
     }
-  }, [pickerInstance.color, values.rgb, values.hsl, setCurrentColor]);
+  }, [pickerInstance.color, values.rgb, values.hsl, setEaselColor]);
 
   // On key down, handle backspace and delete properly
   const handleKeyDown = useCallback(e => {
@@ -356,7 +356,7 @@ export default function Picker({pickerInstance, values, colorUtil, setCurrentCol
       setRgb(values.rgb);
       setHsl(values.hsl);
       updateColorName();
-      setCurrentColor(values.hex);
+      setEaselColor(values.hex);
     }
     // Define mouse events
     let isColorChanging = false;
@@ -385,7 +385,7 @@ export default function Picker({pickerInstance, values, colorUtil, setCurrentCol
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     }
-  }, [updateColorName, values, setCurrentColor]);
+  }, [updateColorName, values, setEaselColor]);
 
   return (
     <div className="picker">
