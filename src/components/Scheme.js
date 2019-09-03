@@ -1,15 +1,15 @@
 import React from 'react';
 import Swatch from './Swatch';
-import './Palette.css'
+import './Scheme.css'
 
-export default function Palette({colors, easelColor}) {
+export default function Scheme({colors, easelColor}) {
 
   const addColor = () => {
     colors.push(easelColor);
   };
 
   return (
-    <div className="palette">
+    <div className="scheme">
       <button onClick={addColor}>Add current color</button>
       {colors.map(color => (
         <Swatch

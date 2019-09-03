@@ -3,7 +3,7 @@ import Clipboard from 'clipboard';
 import PickerCreator from '../api/PickerCreator.js';
 import ColorUtil from '../api/ColorUtil.js';
 import Picker from './Picker';
-import Palette from './Palette';
+import Scheme from './Scheme';
 import './Easel.css';
 
 const defaultPickerName = 'colorPicker';
@@ -16,31 +16,31 @@ const pickerCreator = new PickerCreator(defaultPickerName);
 const [pickerInstance, values] = pickerCreator.generate();
 const colorUtil = new ColorUtil();
 
-var paletteId = 0;
+var schemeId = 0;
 
 export default function Easel() {
-  const [palettes, setPalettes] = useState([]);
+  const [schemes, setSchemes] = useState([]);
   const [easelColor, setEaselColor] = useState(values.hex);
   const [currentSwatch, setCurrentSwatch] = useState(null);
 
-  const addPalette = () => {
-    var paletteInstance = {
-      id: paletteId++,
+  const addScheme = () => {
+    var schemeInstance = {
+      id: schemeId++,
       colors: ['#ffffff'],
     };
-    setPalettes([...palettes, paletteInstance]);
+    setSchemes([...schemes, schemeInstance]);
   };
 
-  const removePalette = (palette) => {
-    var palettesCopy = [...palettes];
-    for (var i = palettesCopy.length - 1; i >= 0; i--) {
-      var p = palettesCopy[i];
-      if (p.id === palette.id) {
-        palettesCopy.splice(i, 1);
+  const removeScheme = (scheme) => {
+    var schemesCopy = [...schemes];
+    for (var i = schemesCopy.length - 1; i >= 0; i--) {
+      var s = schemesCopy[i];
+      if (s.id === scheme.id) {
+        schemesCopy.splice(i, 1);
         break;
       }
     }
-    setPalettes(palettesCopy);
+    setSchemes(schemesCopy);
   };
 
   return (
@@ -52,12 +52,12 @@ export default function Easel() {
         colorUtil={colorUtil}
         setEaselColor={setEaselColor}
       />
-      <div className="palette-container">
-        <button onClick={addPalette}>Add Palette</button>
-        {palettes.map(palette => (
-          <Palette
-            key={palette.id}
-            colors={palette.colors}
+      <div className="scheme-container">
+        <button onClick={addScheme}>Add Scheme</button>
+        {schemes.map(scheme => (
+          <Scheme
+            key={scheme.id}
+            colors={scheme.colors}
             easelColor={easelColor}
           />
         ))}
