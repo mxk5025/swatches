@@ -258,7 +258,7 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
       return;
     }
     setTemp(tempValue);
-  })
+  }, [])
 
   // On out of focus and value is empty string, set to default value of 0
   const handleRgbBlur = useCallback(prop => e => {

@@ -1,8 +1,10 @@
 import React from 'react';
 import './Swatch.css'
 
-export default function Swatch() {
+export default function Swatch({color}) {
+
   return (
-    <div></div>
+    <div className="swatch">
+    </div>
   );
 }
