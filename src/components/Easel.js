@@ -26,7 +26,7 @@ export default function Easel() {
   const addPalette = () => {
     var paletteInstance = {
       id: paletteId++,
-      colors: [],
+      colors: ['#ffffff'],
     };
     setPalettes([...palettes, paletteInstance]);
   };
@@ -53,10 +53,12 @@ export default function Easel() {
         setEaselColor={setEaselColor}
       />
       <div className="palette-container">
+        <button onClick={addPalette}>Add Palette</button>
         {palettes.map(palette => (
           <Palette
             key={palette.id}
             colors={palette.colors}
+            easelColor={easelColor}
           />
         ))}
       </div>

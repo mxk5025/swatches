@@ -1,4 +1,8 @@
 .easel {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+}
+
+.palette-container {
+  margin: 20px 10%;
 }
