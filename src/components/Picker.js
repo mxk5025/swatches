@@ -62,7 +62,7 @@ const stringToColor = str => {
   return color;
 };
 
-export default function Picker({id, pickerInstance, values, colorUtil}) {
+export default function Picker({pickerInstance, values, colorUtil}) {
   const [temp, setTemp] = useState('');
   const [colorName, setColorName] = useState('Red');
   const [hex, setHex] = useState(values.hex);
@@ -386,20 +386,20 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
 
   return (
     <div className="picker">
-      <div className={"colorPicker" + id} ref={colorPicker}/>
+      <div className={"colorPicker"} ref={colorPicker}/>
       <div className="colorValues">
         <div className="color-container" style={{backgroundColor: values.hex}}>
           <div className="name-container">
             <div id="name-label">
               name:&nbsp;
-              <input id={"name-input" + id} type="text" value={colorName} maxLength="40"
+              <input id="name-input" type="text" value={colorName} maxLength="40"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleNamePress}
                 onBlur={handleNameBlur}
                 onChange={handleNameChange}
               />
               <button className="clip-name"
-                data-clipboard-target={"#name-input" + id}
+                data-clipboard-target="#name-input"
               >
                 <img width="14" src={clippy} alt="Copy" />
               </button>
@@ -408,14 +408,14 @@ export default function Picker({id, pickerInstance, values, colorUtil}) {
           <div className="hex-container">
             <div id="hex-label">
               hex:&nbsp;
-              <input id={"hex-input" + id} type="text" value={hex} maxLength="7"
+              <input id="hex-input" type="text" value={hex} maxLength="7"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleHexKeyPress}
                 onPaste={handleHexPaste}
                 onChange={handleHexChange}
               />
               <button className="clip-hex"
-                data-clipboard-target={"#hex-input" + id}
+                data-clipboard-target="#hex-input"
               >
                 <img width="14" src={clippy} alt="Copy" />
               </button>

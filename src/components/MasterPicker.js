@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import Clipboard from 'clipboard';
 import PickerCreator from '../api/PickerCreator.js';
 import ColorUtil from '../api/ColorUtil.js';
@@ -11,31 +11,21 @@ const defaultPickerName = 'colorPicker';
 new Clipboard('.clip-name');
 new Clipboard('.clip-hex');
 
+const pickerCreator = new PickerCreator(defaultPickerName);
+const picker = pickerCreator.generate();
+const colorUtil = new ColorUtil();
+
 export default function MasterPicker() {
-  const [pickerCreator] = useState(new PickerCreator(defaultPickerName));
-  const [pickers, setPickers] = useState([pickerCreator.generate()]);
-
-  const addPicker = () => {
-    var nextPickers = [...pickers, pickerCreator.generate()];
-    setPickers(nextPickers);
-  };
-
-  useEffect(() => {
-    return () => {
-    };
-  }, []);
 
   return (
     <div className="masterPicker">
-      {pickers.map((picker, index) => (
-        <Picker
-          key={defaultPickerName + index}
-          id={index}
-          pickerInstance={picker[0]}
-          values={picker[1]}
-          colorUtil ={new ColorUtil()}
-        />
-      ))}
+      <Picker
+        key={defaultPickerName}
+        pickerInstance={picker[0]}
+        values={picker[1]}
+        colorUtil={colorUtil}
+      />
+
     </div>
   );
 }
