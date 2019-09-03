@@ -16,6 +16,7 @@ const pickerCreator = new PickerCreator(defaultPickerName);
 const [pickerInstance, values] = pickerCreator.generate();
 const colorUtil = new ColorUtil();
 
+const schemeName = 'Scheme-';
 var schemeId = 0;
 
 export default function Easel() {
@@ -24,18 +25,14 @@ export default function Easel() {
   const [currentSwatch, setCurrentSwatch] = useState(null);
 
   const addScheme = () => {
-    var schemeInstance = {
-      id: schemeId++,
-      colors: ['#ffffff'],
-    };
-    setSchemes([...schemes, schemeInstance]);
+    setSchemes([...schemes, schemeName + schemeId++]);
   };
 
   const removeScheme = (scheme) => {
     var schemesCopy = [...schemes];
     for (var i = schemesCopy.length - 1; i >= 0; i--) {
       var s = schemesCopy[i];
-      if (s.id === scheme.id) {
+      if (s === scheme) {
         schemesCopy.splice(i, 1);
         break;
       }
@@ -53,11 +50,12 @@ export default function Easel() {
         setEaselColor={setEaselColor}
       />
       <div className="scheme-container">
-        <button onClick={addScheme}>Add Scheme</button>
+        <button onClick={addScheme}>Create Scheme</button>
         {schemes.map(scheme => (
           <Scheme
-            key={scheme.id}
-            colors={scheme.colors}
+            key={scheme}
+            schemeId={scheme}
+            remove={removeScheme}
             easelColor={easelColor}
           />
         ))}

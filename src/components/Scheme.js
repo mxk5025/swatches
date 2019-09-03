@@ -1,19 +1,23 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Swatch from './Swatch';
 import './Scheme.css'
 
-export default function Scheme({colors, easelColor}) {
+var colorId = 0;
+
+export default function Scheme({schemeId, remove, easelColor}) {
+  const [colors, setColors] = useState(['#ffffff']);
 
   const addColor = () => {
-    colors.push(easelColor);
+    setColors([...colors, easelColor]);
   };
 
   return (
     <div className="scheme">
-      <button onClick={addColor}>Add current color</button>
+      <button onClick={e => {remove(schemeId)}}>Delete</button>
+      <button onClick={e => {addColor()}}>Add current color</button>
       {colors.map(color => (
         <Swatch
-          key={color}
+          key={color + '-' + colorId++}
           color={color}
         />
       ))}
