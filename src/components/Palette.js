@@ -1,5 +1,5 @@
 import React from 'react';
-import Swatch from './Swatch.js';
+import Swatch from './Swatch';
 import './Palette.css'
 
 export default function Palette({colors}) {
