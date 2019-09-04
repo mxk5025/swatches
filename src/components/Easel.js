@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Clipboard from 'clipboard';
 import PickerCreator from '../api/PickerCreator.js';
 import ColorNameUtil from '../api/ColorNameUtil.js';
+import ColorUtil from '../api/ColorUtil.js';
 import Picker from './Picker';
 import Scheme from './Scheme';
 import './Easel.css';
