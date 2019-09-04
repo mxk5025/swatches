@@ -62,7 +62,7 @@ const stringToColor = str => {
   return color;
 };
 
-export default function Picker({pickerInstance, values, colorUtil, setEaselColor}) {
+export default function Picker({pickerInstance, values, colorNameUtil, setEaselColor}) {
   const [temp, setTemp] = useState('');
   const [colorName, setColorName] = useState('Red');
   const [hex, setHex] = useState(values.hex);
@@ -75,11 +75,11 @@ export default function Picker({pickerInstance, values, colorUtil, setEaselColor
   // Update the color name when necessary
   const updateColorName = useCallback(() => {
     const longHex = convertShortHexToLongHex(values.hex);
-    let color = colorUtil.getColor(longHex);
+    let color = colorNameUtil.getColor(longHex);
     // Use the nearest color name if not defined
-    color = color === undefined ? colorUtil.getNearestColor(longHex).name : color.name;
+    color = color === undefined ? colorNameUtil.getNearestColor(longHex).name : color.name;
     setColorName(color);
-  }, [colorUtil, values]);
+  }, [colorNameUtil, values]);
 
   // Update Hex, RGB, and HSL in component as well as the widget
   const updateRgb = useCallback(tempRgb => {
@@ -339,7 +339,7 @@ export default function Picker({pickerInstance, values, colorUtil, setEaselColor
       setTemp('');
     }
     var value = e.target.value === '' ? 'Black' : e.target.value;
-    const color = colorUtil.getHex(value);
+    const color = colorNameUtil.getHex(value);
     let hexFromName = color === undefined ? stringToColor(value) : color.hex;
     updateHex(hexFromName);
     // Set, but do not update internal values
@@ -347,7 +347,7 @@ export default function Picker({pickerInstance, values, colorUtil, setEaselColor
     // Maintain the selection index
     e.target.selectionStart = index;
     e.target.selectionEnd = index;
-  }, [temp, updateHex, colorUtil]);
+  }, [temp, updateHex, colorNameUtil]);
 
   useEffect(() => {
     // Define update values

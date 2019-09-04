@@ -1,7 +1,7 @@
 import namedColors from 'color-name-list';
 import nearestColor from 'nearest-color';
 
-export default class ColorUtil {
+export default class ColorNameUtil {
 
   constructor() {
     this.namedColors = namedColors;

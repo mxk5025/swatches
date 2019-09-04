@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Clipboard from 'clipboard';
 import PickerCreator from '../api/PickerCreator.js';
-import ColorUtil from '../api/ColorUtil.js';
+import ColorNameUtil from '../api/ColorNameUtil.js';
 import Picker from './Picker';
 import Scheme from './Scheme';
 import './Easel.css';
@@ -14,7 +14,7 @@ new Clipboard('.clip-hex');
 
 const pickerCreator = new PickerCreator(defaultPickerName);
 const [pickerInstance, values] = pickerCreator.generate();
-const colorUtil = new ColorUtil();
+const colorNameUtil = new ColorNameUtil();
 
 const schemeName = 'Scheme-';
 var schemeId = 0;
@@ -46,11 +46,11 @@ export default function Easel() {
         key={defaultPickerName}
         pickerInstance={pickerInstance}
         values={values}
-        colorUtil={colorUtil}
+        colorNameUtil={colorNameUtil}
         setEaselColor={setEaselColor}
       />
       <div className="scheme-container">
-        <button onClick={addScheme}>Create Scheme</button>
+        <button onClick={e => addScheme()}>Create Scheme</button>
         {schemes.map(scheme => (
           <Scheme
             key={scheme}
