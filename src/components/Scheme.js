@@ -11,6 +11,18 @@ export default function Scheme({schemeId, remove, easelColor}) {
     setColors([...colors, easelColor]);
   };
 
+  const removeColor = () => {
+    var colorsCopy = [...colors];
+    for (var i = colorsCopy.length - 1; i >= 0; i--) {
+      var c = colorsCopy[i];
+      if (c === colors) {
+        colorsCopy.splice(i, 1);
+        break;
+      }
+    }
+    setColors(colorsCopy);
+  }
+
   return (
     <div className="scheme">
       <button onClick={e => {remove(schemeId)}}>Delete</button>
