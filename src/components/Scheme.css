@@ -1,3 +1,13 @@
+.scheme-name {
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.scheme-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
 .swatch-container {
   display: flex;
 }

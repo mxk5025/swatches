@@ -6,3 +6,13 @@
   height: 20vh;
   width: 15vw;
 }
+
+.swatch span {
+  text-align: center;
+}
+
+#swatch-input {
+  width: 7.5ch;
+  padding: 2.5px 3px;
+  font-family: 'Consolas', 'Courier New', Courier, monospace;
+}

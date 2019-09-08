@@ -13,9 +13,11 @@ const defaultPickerName = 'colorPicker';
 new Clipboard('.clip-name');
 new Clipboard('.clip-hex');
 
+const colorNameUtil = new ColorNameUtil();
+const colorUtil = new ColorUtil();
+
 const pickerCreator = new PickerCreator(defaultPickerName);
 const [pickerInstance, values] = pickerCreator.generate();
-const colorNameUtil = new ColorNameUtil();
 
 const schemeName = 'Scheme-';
 var schemeId = 0;
@@ -51,7 +53,7 @@ export default function Easel() {
         setEaselColor={setEaselColor}
       />
       <div className="scheme-container">
-        <button onClick={e => addScheme()}>Create Scheme</button>
+        <button onClick={e => addScheme()}>New Scheme</button>
         {schemes.map(scheme => (
           <Scheme
             key={scheme}

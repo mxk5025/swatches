@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useCallback} from 'react';
 import Swatch from './Swatch';
 import './Scheme.css'
 
@@ -31,16 +31,32 @@ export default function Scheme({schemeId, remove, easelColor}) {
     setColors(colorsCopy);
   }, [colors]);
 
+  const changeColor = useCallback((color, replacement) => {
+    var colorsCopy = [...colors];
+    for (var i = colorsCopy.length - 1; i >= 0; i--) {
+      var c = colorsCopy[i];
+      if (c === color) {
+        colorsCopy.splice(i, 1, replacement);
+        break;
+      }
+    }
+    setColors(colorsCopy);
+  }, [colors]);
+
   return (
     <div className="scheme">
-      <button onClick={e => remove(schemeId)}>Delete Scheme</button>
-      <button onClick={e => addColor()}>Add current color</button>
+      <div className="scheme-name">{schemeId.split('-').join(' ')}</div>
+      <div className="scheme-buttons">
+        <button onClick={e => addColor()}>Add Current Color</button>
+        <button onClick={e => remove(schemeId)}>Delete Scheme</button>
+      </div>
       <div className="swatch-container">
         {colors.map(color => (
           <Swatch
             key={color + '-' + colorId++}
             color={color}
             removeColor={removeColor}
+            chanceColor={changeColor}
           />
         ))}
       </div>
