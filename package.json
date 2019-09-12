@@ -32,7 +32,7 @@
     "not op_mini all"
   ],
   "homepage": "https://khacoding.com/swatches",
-  "bugs": "https://github.com/mxk5025/stock-portfolio/issues",
+  "bugs": "https://github.com/mxk5025/swatches/issues",
   "devDependencies": {
     "gh-pages": "^2.1.1"
   }
