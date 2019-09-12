@@ -36,11 +36,13 @@ export default function Scheme({schemeId, remove, easelColor}) {
     for (var i = colorsCopy.length - 1; i >= 0; i--) {
       var c = colorsCopy[i];
       if (c === color) {
-        colorsCopy.splice(i, 1, replacement);
+        console.log(colorsCopy);
+        console.log(colorsCopy.splice(i, 1, replacement));
         break;
       }
     }
     setColors(colorsCopy);
+    console.log(colors);
   }, [colors]);
 
   return (
@@ -53,10 +55,10 @@ export default function Scheme({schemeId, remove, easelColor}) {
       <div className="swatch-container">
         {colors.map(color => (
           <Swatch
-            key={color + '-' + colorId++}
+            key={'Color-' + colorId++}
             color={color}
             removeColor={removeColor}
-            chanceColor={changeColor}
+            changeColor={changeColor}
           />
         ))}
       </div>
