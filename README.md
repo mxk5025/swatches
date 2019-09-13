@@ -1,4 +1,4 @@
-# Swatches
+# Swatches - Currently on hiatus due to classes: base functionality works but need to work on CSS
 
 React application
 
