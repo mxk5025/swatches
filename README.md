@@ -1,8 +1,12 @@
 # Swatches
 
 ## Note: currently on hiatus due to classes: base functionality works but need to work on CSS
+Color scheme generation tool deployed as a web application; built using React.
 
-React application
+##### Unicode Characters to Color Name
+![](doc/images/fire-name-input.png "🔥")
+![](doc/images/old-wine-name-output.png "Old Wine")*Upon input field losing focus, the actual color name displays.*
+
 
 ## Installation
 
@@ -45,15 +49,17 @@ yarn start
 ## Built With
 
 * [React](https://reactjs.org/) - JavaScript UI library.
+* [iro.js](https://github.com/jaames/iro.js) - HSV color picker widget for JavaScript.
+* [color-names](https://github.com/meodai/color-names) - Crowdsourced color name list.
+* [nearest-color](https://github.com/dtao/nearest-color) - Naive NNS implementation to find nearest color from a list of colors.
+* [clipboard](https://github.com/zenorocha/clipboard.js) - Modern copy to clipboard.
 
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://github.com/mxk5025/swatches/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
-## Authors
-
-* **Michael Kha** - *creator* - [mxk5025](https://github.com/mxk5025)
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+&copy; [Michael Kha](https://github.com/mxk5025)
