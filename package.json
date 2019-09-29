@@ -31,7 +31,7 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "homepage": "https://khacoding.com/swatches",
+  "homepage": "https://michael-kha.com/swatches",
   "bugs": "https://github.com/mxk5025/swatches/issues",
   "devDependencies": {
     "gh-pages": "^2.1.1"
