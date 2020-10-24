@@ -3,8 +3,7 @@ import Swatch from './Swatch';
 import './Scheme.css'
 
 const minColors = 3;
-const maxColors = 10;
-var colorId = 0;
+const maxColors = 8;
 
 export default function Scheme({schemeId, remove, easelColor}) {
   const [colors, setColors] = useState(['#ffffff']);
@@ -53,9 +52,10 @@ export default function Scheme({schemeId, remove, easelColor}) {
         <button onClick={e => remove(schemeId)}>Delete Scheme</button>
       </div>
       <div className="swatch-container">
-        {colors.map(color => (
+        {colors.map((color, colorId) => (
           <Swatch
-            key={'Color-' + colorId++}
+            key={'Color-' + colorId}
+            colorId={colorId}
             color={color}
             removeColor={removeColor}
             changeColor={changeColor}

@@ -29,12 +29,12 @@ const isPartialHexInput = value => {
 
 // Convert short hex to long hex when using color names
 const convertShortHexToLongHex = hexVal => {
-  var longHex = "#";
+  let longHex = "#";
   const index = hexVal.startsWith('#') ? 1 : 0;
   if (hexVal.length - index === 6) {
     return hexVal;
   }
-  for (var ch of hexVal.slice(index)) {
+  for (let ch of hexVal.slice(index)) {
     longHex += ch + ch;
   }
   return longHex;
@@ -50,13 +50,13 @@ const hasSelection = () => {
 
 // Convert any string to a valid hex color
 const stringToColor = str => {
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
-  var color = '#';
-  for (i = 0; i < 3; i++) {
-    var value = (hash >> (i * 8)) & 0xFF;
+  let color = '#';
+  for (let i = 0; i < 3; i++) {
+    let value = (hash >> (i * 8)) & 0xFF;
     color += ('00' + value.toString(16)).substr(-2);
   }
   return color;
@@ -121,7 +121,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
 
   // On input key press, perform validation for on change event
   const handleKeyPress = useCallback(max => e => {
-    var value = e.target.value;
+    let value = e.target.value;
     // If selected and valid key
     if (hasSelection() && /[0-9]/.test(e.key)) {
       return;
@@ -134,10 +134,10 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
     // If input has characters
     if (value !== '') {
       // Generate the temp value based on where selection started
-      var digits = [...value];
+      let digits = [...value];
       const index = e.target.selectionStart;
       digits.splice(index, 0, e.key);
-      var tempValue = digits.join('');
+      let tempValue = digits.join('');
       // If the temp value is invalid, prevent input
       if (isInvalidInput(tempValue) ||
           (value.length === 2 && outOfBounds(tempValue, max))) {
@@ -150,14 +150,15 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
   }, []);
 
   const handleNamePress = useCallback(e => {
-    var value = e.target.value;
+    // Value before e.key is added
+    let value = e.target.value;
     // If there is a selection allow input
     if (hasSelection()) {
-      // // If replacing entire input, make sure key is upper case
-      // if (document.getSelection().toString() === value) {
-      //   e.key = e.key.toUpperCase();
-      //   setTemp(e.key);
-      // }
+      // If replacing entire input, make sure key is upper case
+      if (document.getSelection().toString() === value) {
+        e.key = e.key.toUpperCase();
+        setTemp(e.key);
+      }
       return;
     }
     // Only allow these characters for naming conventions
@@ -168,20 +169,26 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
     // If input has characters
     if (value !== '') {
       // Generate the temp value based on where selection started
-      var chars = [...value];
+      let chars = [...value];
       const index = e.target.selectionStart;
-      // // If first char, make it upper case
-      // if (index === 0 && /[a-z]/.test(e.key)) {
-      //   e.key = e.key.toUpperCase();
-      // }
       chars.splice(index, 0, e.key);
-      var tempValue = chars.join('');
+      let tempValue = chars.join('');
+      console.log(tempValue);
       setTemp(tempValue);
+    }
+    // Handle backspace to capitalize first char
+    else {
+      const index = e.target.selectionStart;
+      // first char, make it upper case
+      if (index === 0 && /[a-z]/.test(e.key)) {
+        e.key = e.key.toUpperCase();
+      }
+      setTemp(e.key);
     }
   }, []);
 
   const handleHexKeyPress = useCallback(e => {
-    var value = e.target.value;
+    let value = e.target.value;
     const index = e.target.selectionStart;
     // If selected and valid key
     if (hasSelection() && /[#a-fA-F0-9]/.test(e.key)) {
@@ -198,14 +205,14 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
         return;
       }
       // Generate the temp value based on where selection started
-      var hexValues = [...value];
+      let hexValues = [...value];
       // Validate that # starts on the 0th index
       if (e.key === '#' && index !== 0) {
         e.preventDefault();
         return;
       }
       hexValues.splice(index, 0, e.key);
-      var tempValue = hexValues.join('');
+      let tempValue = hexValues.join('');
       // If the temp value is invalid, prevent input
       if (isInvalidHexInput(tempValue) && !isPartialHexInput(tempValue)) {
         e.preventDefault();
@@ -227,12 +234,12 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
       e.preventDefault();
       return;
     }
-    var value = e.target.value;
+    let value = e.target.value;
     const index = e.target.selectionStart;
     const count = e.target.selectionEnd - index;
-    var digits = [...value];
+    let digits = [...value];
     digits.splice(index, count, textData);
-    var tempValue = digits.join('');
+    let tempValue = digits.join('');
     // Prevent if out of bounds
     if (outOfBounds(tempValue, max)) {
       e.preventDefault();
@@ -249,12 +256,12 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
       e.preventDefault();
       return;
     }
-    var value = e.target.value;
+    let value = e.target.value;
     const index = e.target.selectionStart;
     const count = e.target.selectionEnd - index;
-    var chars = [...value];
+    let chars = [...value];
     chars.splice(index, count, textData);
-    var tempValue = chars.join('');
+    let tempValue = chars.join('');
     // Prevent if invalid and not a partial
     if (isInvalidHexInput(tempValue) && !isPartialHexInput(tempValue)) {
       e.preventDefault();
@@ -267,7 +274,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
   const handleRgbBlur = useCallback(prop => e => {
     if (e.target.value === '') {
       e.target.value = '0';
-      var tempRgb = JSON.parse(JSON.stringify(values.rgb));
+      let tempRgb = JSON.parse(JSON.stringify(values.rgb));
       tempRgb[prop] = e.target.value;
       updateRgb(tempRgb);
       updateColorName();
@@ -277,7 +284,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
   const handleHslBlur = useCallback(prop => e => {
     if (e.target.value === '') {
       e.target.value = '0';
-      var tempHsl = JSON.parse(JSON.stringify(values.hsl));
+      let tempHsl = JSON.parse(JSON.stringify(values.hsl));
       tempHsl[prop] = e.target.value;
       updateHsl(tempHsl);
       updateColorName();
@@ -295,8 +302,8 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
       e.target.value = temp;
       setTemp('');
     }
-    var value = e.target.value;
-    var tempRgb = JSON.parse(JSON.stringify(values.rgb));
+    let value = e.target.value;
+    let tempRgb = JSON.parse(JSON.stringify(values.rgb));
     tempRgb[prop] = value;
     if (value !== '') {
       updateRgb(tempRgb);
@@ -311,8 +318,8 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
       e.target.value = temp;
       setTemp('');
     }
-    var value = e.target.value;
-    var tempHsl = JSON.parse(JSON.stringify(values.hsl));
+    let value = e.target.value;
+    let tempHsl = JSON.parse(JSON.stringify(values.hsl));
     tempHsl[prop] = value;
     if (value !== '') {
       updateHsl(tempHsl);
@@ -327,7 +334,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
       e.target.value = temp;
       setTemp('');
     }
-    var value = e.target.value === '' ? '#000' : e.target.value;
+    let value = e.target.value === '' ? '#000' : e.target.value;
     updateHex(value);
     updateColorName();
   }, [temp, updateHex, updateColorName]);
@@ -338,7 +345,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
       e.target.value = temp;
       setTemp('');
     }
-    var value = e.target.value === '' ? 'Black' : e.target.value;
+    let value = e.target.value === '' ? 'Black' : e.target.value;
     const color = colorNameUtil.getHex(value);
     let hexFromName = color === undefined ? stringToColor(value) : color.hex;
     updateHex(hexFromName);

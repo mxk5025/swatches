@@ -1,7 +1,7 @@
 import React, {useState, useCallback} from 'react';
 import './Swatch.css'
 
-export default function Swatch({color, removeColor, changeColor}) {
+export default function Swatch({colorId, color, removeColor, changeColor}) {
   const [currentColor, setCurrentColor] = useState(color);
 
   const changeColorToCurrent = useCallback(e => {
@@ -28,7 +28,7 @@ export default function Swatch({color, removeColor, changeColor}) {
         Remove
       </button>
       <span>{currentColor}</span>
-      <input id="swatch-input" type="text" value={currentColor} maxLength="7"
+      <input id={`swatch-input-${colorId}`} type="text" value={currentColor} maxLength="7"
         onBlur={handleBlur}
         onChange={handleChange}
       />

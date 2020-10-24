@@ -18,11 +18,6 @@ export default class PickerCreator {
       borderColor: '#fff',
     });
 
-    // pickerInstance.color.hexString = '#fff'
-    // pickerInstance.color.rgb = { r: 255, g: 255, b: 255};
-    // pickerInstance.color.rgbString = 'rgb(255,255,255)';
-    // pickerInstance.color.hslString = 'hsl(360, 100%, 50%)';
-
     var values = {};
     // https://iro.js.org/guide.html#color-picker-events
     pickerInstance.on(['color:init', 'color:change'], function(color){
