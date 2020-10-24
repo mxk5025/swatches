@@ -5,13 +5,13 @@
   "license": "MIT",
   "author": "Michael Kha",
   "dependencies": {
-    "@jaames/iro": "^4.5.1",
-    "clipboard": "^2.0.4",
-    "color-name-list": "^4.10.0",
+    "@jaames/iro": "^5.1.5",
+    "clipboard": "^2.0.6",
+    "color-name-list": "^4.15.0",
     "nearest-color": "^0.4.4",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "react-scripts": "3.1.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.4.1",
     "tinycolor2": "^1.4.1"
   },
   "scripts": {
@@ -34,6 +34,6 @@
   "homepage": "https://michael-kha.com/swatches",
   "bugs": "https://github.com/mxk5025/swatches/issues",
   "devDependencies": {
-    "gh-pages": "^2.1.1"
+    "gh-pages": "^2.2.0"
   }
 }
