@@ -1,6 +1,5 @@
 # Swatches
 
-## Note: currently on hiatus due to classes: base functionality works but need to work on CSS
 Color scheme generation tool deployed as a web application; built using React.
 
 ##### Unicode Characters to Color Name
@@ -61,5 +60,3 @@ Please read [CONTRIBUTING.md](https://github.com/mxk5025/swatches/blob/master/CO
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-
-&copy; [Michael Kha](https://github.com/mxk5025)
