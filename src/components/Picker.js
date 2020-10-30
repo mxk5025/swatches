@@ -1,6 +1,9 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
+import rdfc from 'rfdc';
 import clippy from '../assets/clippy.svg';
 import './Picker.css';
+
+const clone = rdfc();
 
 // Check if value exceeds max
 const outOfBounds = (value, max) => {
@@ -68,6 +71,13 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
   const [hex, setHex] = useState(values.hex);
   const [rgb, setRgb] = useState(values.rgb);
   const [hsl, setHsl] = useState(values.hsl);
+  // Allow ability to toggle what is displayed
+  const [showOptions, setShowOptions] = useState({
+    name: true,
+    hex: true,
+    rgb: true,
+    hsl: true
+  });
 
   // Ref for event handling in useEffect
   const colorPicker = useRef();
@@ -274,7 +284,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
   const handleRgbBlur = useCallback(prop => e => {
     if (e.target.value === '') {
       e.target.value = '0';
-      let tempRgb = JSON.parse(JSON.stringify(values.rgb));
+      let tempRgb = clone(values.rgb);
       tempRgb[prop] = e.target.value;
       updateRgb(tempRgb);
       updateColorName();
@@ -284,7 +294,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
   const handleHslBlur = useCallback(prop => e => {
     if (e.target.value === '') {
       e.target.value = '0';
-      let tempHsl = JSON.parse(JSON.stringify(values.hsl));
+      let tempHsl = clone(values.hsl);
       tempHsl[prop] = e.target.value;
       updateHsl(tempHsl);
       updateColorName();
@@ -303,7 +313,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
       setTemp('');
     }
     let value = e.target.value;
-    let tempRgb = JSON.parse(JSON.stringify(values.rgb));
+    let tempRgb = clone(values.rgb);
     tempRgb[prop] = value;
     if (value !== '') {
       updateRgb(tempRgb);
@@ -319,7 +329,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
       setTemp('');
     }
     let value = e.target.value;
-    let tempHsl = JSON.parse(JSON.stringify(values.hsl));
+    let tempHsl = clone(values.hsl);
     tempHsl[prop] = value;
     if (value !== '') {
       updateHsl(tempHsl);
@@ -364,7 +374,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
       setHsl(values.hsl);
       updateColorName();
       setEaselColor(values.hex);
-    }
+    };
     // Define mouse events
     let isColorChanging = false;
     const handleMouseDown = e => {
@@ -382,7 +392,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
       if (isColorChanging) {
         isColorChanging = false;
       }
-    }
+    };
     // Add the event listeners
     document.addEventListener('mousedown', handleMouseDown);
     document.addEventListener('mousemove', handleMouseMove);
@@ -396,7 +406,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
 
   return (
     <div className="picker">
-      <div className={"colorPicker"} ref={colorPicker}/>
+      <div className="colorPicker" ref={colorPicker}/>
       <div className="colorValues">
         <div className="color-container" style={{backgroundColor: values.hex}}>
           <div className="name-container">
@@ -432,7 +442,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
             </div>
           </div>
           <div className="rgb-container">
-            rgb({rgb.r}, {rgb.g}, {rgb.b})
+            <span>{`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`}</span>
             <div>
               r:&nbsp;
               <input type="text" value={rgb.r} maxLength="3"
@@ -465,7 +475,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
             </div>
           </div>
           <div className="hsl-container">
-            hsl({hsl.h}, {hsl.s}%, {hsl.l}%)
+            <span>{`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`}</span>
             <div>
               h:&nbsp;
               <input type="text" value={hsl.h} maxLength="3"

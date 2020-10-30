@@ -1,7 +1,7 @@
-import React, {useState, useCallback} from 'react';
+import React, { useState, useCallback } from 'react';
 import './Swatch.css'
 
-export default function Swatch({colorId, color, removeColor, changeColor}) {
+const Swatch = ({colorId, color, removeColor, changeColor}) => {
   const [currentColor, setCurrentColor] = useState(color);
 
   const changeColorToCurrent = useCallback(e => {
@@ -22,7 +22,7 @@ export default function Swatch({colorId, color, removeColor, changeColor}) {
     <div className="swatch" style={{backgroundColor: currentColor, color: currentColor.slice(1) < 'a00000' ? '#fff' : '#000'}}>
       <button onClick={() => {
           changeColorToCurrent();
-          removeColor(currentColor);
+          removeColor(colorId);
         }}
       >
         Remove
@@ -35,3 +35,5 @@ export default function Swatch({colorId, color, removeColor, changeColor}) {
     </div>
   );
 }
+
+export default Swatch;

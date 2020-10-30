@@ -12,6 +12,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1",
+    "rfdc": "^1.1.4",
     "tinycolor2": "^1.4.1"
   },
   "scripts": {
