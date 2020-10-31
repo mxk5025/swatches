@@ -2,48 +2,23 @@
 
 Color scheme generation tool deployed as a web application; built using React.
 
-##### Unicode Characters to Color Name
+Integrates with a variety of color libraries to help find the perfect color scheme.
+
+<!-- TOC START min:2 max:3 link:true asterisk:true update:true -->
+* [Features](#features)
+	* [Unicode Characters to Color Name](#unicode-characters-to-color-name)
+* [Built With](#built-with)
+* [Contributing](#contributing)
+* [License](#license)
+<!-- TOC END -->
+
+## Features
+
+### Unicode Characters to Color Name
 ![](doc/images/fire-name-input.png "🔥")
-![](doc/images/old-wine-name-output.png "Old Wine")*Upon input field losing focus, the actual color name displays.*
+![](doc/images/old-wine-name-output.png "Old Wine")
 
-
-## Installation
-
-Install node.js, add to path.
-
-Install git, add to path.
-
-Install yarn depending on your OS.
-
-then
-```
-git clone https://github.com/mxk5025/swatches.git
-cd stock-portfolio
-```
-
-If using npm
-```
-npm install
-```
-
-If using yarn
-```
-yarn
-```
-
-## Running in dev mode
-
-To run a development server:
-
-If using npm
-```
-npm start
-```
-
-If using yarn
-```
-yarn start
-```
+*Upon input field losing focus, the actual color name displays.*
 
 ## Built With
 
