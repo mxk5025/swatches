@@ -6,12 +6,12 @@ const minColors = 0;
 const maxColors = 8;
 
 const Scheme = ({schemeId, remove, easelColor}) => {
-  const [colors, setColors] = useState(['#ffffff']);
+  const [colors, setColors] = useState([]);
   const [name, setName] = useState(schemeId.split('-').join(' '));
   const [selected, setSelected] = useState(false);
 
   const addColor = useCallback(() => {
-    if (colors.length >= maxColors) {
+    if (colors.length >= maxColors || colors.includes(easelColor)) {
       return;
     }
     setColors([...colors, easelColor]);
@@ -31,27 +31,18 @@ const Scheme = ({schemeId, remove, easelColor}) => {
     for (var i = colorsCopy.length - 1; i >= 0; i--) {
       var c = colorsCopy[i];
       if (c === color) {
-        console.log(colorsCopy);
-        console.log(colorsCopy.splice(i, 1, replacement));
+        colorsCopy.splice(i, 1, replacement);
         break;
       }
     }
     setColors(colorsCopy);
-    console.log(colors);
   }, [colors]);
 
-  const rename = (name) => setName(name);
 
   return (
     <div className="scheme">
       <div className="scheme-name">
-        {selected ?
-          <input
-            value={name}
-          />
-          :
-          <span onClick={e => setSelected(true)}>{name}</span>
-        }
+        <span onClick={e => setSelected(true)}>{name}</span>
       </div>
       <div className="scheme-buttons">
         <button onClick={e => addColor()}>Add Current Color</button>
@@ -60,7 +51,7 @@ const Scheme = ({schemeId, remove, easelColor}) => {
       <div className="swatch-container">
         {colors.map((color, colorId) => (
           <Swatch
-            key={'Color-' + colorId}
+            key={`Color-${color}`}
             colorId={colorId}
             color={color}
             removeColor={removeColor}
