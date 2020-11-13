@@ -72,12 +72,12 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
   const [rgb, setRgb] = useState(values.rgb);
   const [hsl, setHsl] = useState(values.hsl);
   // Allow ability to toggle what is displayed
-  const [showOptions, setShowOptions] = useState({
-    name: true,
-    hex: true,
-    rgb: true,
-    hsl: true
-  });
+  // const [showOptions, setShowOptions] = useState({
+  //   name: true,
+  //   hex: true,
+  //   rgb: true,
+  //   hsl: true
+  // });
 
   // Ref for event handling in useEffect
   const colorPicker = useRef();

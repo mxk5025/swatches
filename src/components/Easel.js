@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Clipboard from 'clipboard';
 import PickerCreator from '../api/PickerCreator.js';
 import ColorNameUtil from '../api/ColorNameUtil.js';
-import ColorUtil from '../api/ColorUtil.js';
 import Picker from './Picker';
 import Scheme from './Scheme';
 import './Easel.css';
@@ -14,7 +13,6 @@ new Clipboard('.clip-name');
 new Clipboard('.clip-hex');
 
 const colorNameUtil = new ColorNameUtil();
-const colorUtil = new ColorUtil();
 
 const pickerCreator = new PickerCreator(defaultPickerName);
 const [pickerInstance, values] = pickerCreator.generate();
@@ -25,7 +23,6 @@ var schemeId = 0;
 const Easel = () => {
   const [schemes, setSchemes] = useState([]);
   const [easelColor, setEaselColor] = useState(values.hex);
-  const [currentSwatch, setCurrentSwatch] = useState(null);
 
   const addScheme = () => {
     setSchemes([...schemes, schemeName + schemeId++]);
