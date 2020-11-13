@@ -65,7 +65,7 @@ const stringToColor = str => {
   return color;
 };
 
-export default function Picker({pickerInstance, values, colorNameUtil, setEaselColor}) {
+const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
   const [temp, setTemp] = useState('');
   const [colorName, setColorName] = useState('Red');
   const [hex, setHex] = useState(values.hex);
@@ -512,3 +512,5 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
     </div>
   );
 }
+
+export default Picker;

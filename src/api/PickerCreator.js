@@ -9,7 +9,7 @@ export default class PickerCreator {
   generate() {
     // Create a new color picker instance
     // https://iro.js.org/guide.html#getting-started
-    var pickerInstance = new iro.ColorPicker('.' + this.pickerName, {
+    const pickerInstance = new iro.ColorPicker('.' + this.pickerName, {
       // color picker options
       // Option guide: https://iro.js.org/guide.html#color-picker-options
       width: 280,
@@ -18,7 +18,7 @@ export default class PickerCreator {
       borderColor: '#fff',
     });
 
-    var values = {};
+    let values = {};
     // https://iro.js.org/guide.html#color-picker-events
     pickerInstance.on(['color:init', 'color:change'], function(color){
       // Show the current color in different formats
