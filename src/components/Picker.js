@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback, useRef} from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import rdfc from 'rfdc';
 import clippy from '../assets/clippy.svg';
 import './Picker.css';
@@ -6,25 +6,23 @@ import './Picker.css';
 const clone = rdfc();
 
 // Check if value exceeds max
-const outOfBounds = (value, max) => {
-  return parseInt(value, 10) > max;
-};
+const outOfBounds = (value, max) => parseInt(value, 10) > max;
 
 // Check for invalid HSL and RGB input
-const isInvalidInput = value => {
+const isInvalidInput = (value) => {
   const hslRgbPattern = RegExp('^[0-9]{1,3}$');
-  return !hslRgbPattern.test(value) ||
-  (value.startsWith('0') && value.length > 1);
+  return !hslRgbPattern.test(value)
+  || (value.startsWith('0') && value.length > 1);
 };
 
 // Check for invalid Hex input
-const isInvalidHexInput = value => {
+const isInvalidHexInput = (value) => {
   const hexPattern = RegExp('^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$');
   return !hexPattern.test(value);
 };
 
 // Check for partial hex input
-const isPartialHexInput = value => {
+const isPartialHexInput = (value) => {
   const partialHexPattern = RegExp(`^#([a-fA-F0-9]{0,2}|[a-fA-F0-9]{4,5})$|
   ^([a-fA-F0-9]{1,2}|[a-fA-F0-9]{4,5})$`);
   return partialHexPattern.test(value);
@@ -32,27 +30,27 @@ const isPartialHexInput = value => {
 
 // Determine if document has a selection
 const hasSelection = () => {
-  const selection = document.getSelection() ?
-                      document.getSelection().toString() :
-                      document.selection.createRange().toString();
+  const selection = document.getSelection()
+    ? document.getSelection().toString()
+    : document.selection.createRange().toString();
   return selection.length > 0;
 };
 
 // Convert any string to a valid hex color
-const stringToColor = str => {
+const stringToColor = (str) => {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
   let color = '#';
   for (let i = 0; i < 3; i++) {
-    let value = (hash >> (i * 8)) & 0xFF;
-    color += ('00' + value.toString(16)).substr(-2);
+    const value = (hash >> (i * 8)) & 0xFF;
+    color += (`00${value.toString(16)}`).substr(-2);
   }
   return color;
 };
 
-const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
+const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
   const [temp, setTemp] = useState('');
   const [colorName, setColorName] = useState('Red');
   const [hex, setHex] = useState(values.hex);
@@ -78,7 +76,7 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
   }, [colorNameUtil, values]);
 
   // Update Hex, RGB, and HSL in component as well as the widget
-  const updateRgb = useCallback(tempRgb => {
+  const updateRgb = useCallback((tempRgb) => {
     setRgb(tempRgb);
     pickerInstance.color.set(tempRgb);
     setHex(values.hex);
@@ -86,7 +84,7 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
     setEaselColor(values.hex);
   }, [pickerInstance.color, values.hex, values.hsl, setEaselColor]);
 
-  const updateHsl = useCallback(tempHsl => {
+  const updateHsl = useCallback((tempHsl) => {
     setHsl(tempHsl);
     pickerInstance.color.set(tempHsl);
     setHex(values.hex);
@@ -94,7 +92,7 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
     setEaselColor(values.hex);
   }, [pickerInstance.color, values.hex, values.rgb, setEaselColor]);
 
-  const updateHex = useCallback(tempHex => {
+  const updateHex = useCallback((tempHex) => {
     setHex(tempHex);
     // Do not update other values unless hex is valid
     if (!isInvalidHexInput(tempHex)) {
@@ -106,18 +104,18 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
   }, [pickerInstance.color, values.rgb, values.hsl, setEaselColor]);
 
   // On key down, handle backspace and delete properly
-  const handleKeyDown = useCallback(e => {
+  const handleKeyDown = useCallback((e) => {
     const index = e.target.selectionStart;
-    if (e.target.value.length === 1 &&
-      ((e.key === 'Backspace' && index === 1) ||
-      (e.key === 'Delete' && index === 0))) {
+    if (e.target.value.length === 1
+      && ((e.key === 'Backspace' && index === 1)
+      || (e.key === 'Delete' && index === 0))) {
       e.target.value = '';
     }
   }, []);
 
   // On input key press, perform validation for on change event
-  const handleKeyPress = useCallback(max => e => {
-    let value = e.target.value;
+  const handleKeyPress = useCallback((max) => (e) => {
+    const { value } = e.target;
     // If selected and valid key
     if (hasSelection() && /[0-9]/.test(e.key)) {
       return;
@@ -130,13 +128,13 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
     // If input has characters
     if (value !== '') {
       // Generate the temp value based on where selection started
-      let digits = [...value];
+      const digits = [...value];
       const index = e.target.selectionStart;
       digits.splice(index, 0, e.key);
-      let tempValue = digits.join('');
+      const tempValue = digits.join('');
       // If the temp value is invalid, prevent input
-      if (isInvalidInput(tempValue) ||
-          (value.length === 2 && outOfBounds(tempValue, max))) {
+      if (isInvalidInput(tempValue)
+          || (value.length === 2 && outOfBounds(tempValue, max))) {
         e.preventDefault();
         return;
       }
@@ -145,9 +143,9 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
     }
   }, []);
 
-  const handleNamePress = useCallback(e => {
+  const handleNamePress = useCallback((e) => {
     // Value before e.key is added
-    let value = e.target.value;
+    const { value } = e.target;
     // If there is a selection allow input
     if (hasSelection()) {
       // If replacing entire input, make sure key is upper case
@@ -165,15 +163,13 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
     // If input has characters
     if (value !== '') {
       // Generate the temp value based on where selection started
-      let chars = [...value];
+      const chars = [...value];
       const index = e.target.selectionStart;
       chars.splice(index, 0, e.key);
-      let tempValue = chars.join('');
-      console.log(tempValue);
+      const tempValue = chars.join('');
       setTemp(tempValue);
-    }
-    // Handle backspace to capitalize first char
-    else {
+    } else {
+      // Handle backspace to capitalize first char
       const index = e.target.selectionStart;
       // first char, make it upper case
       if (index === 0 && /[a-z]/.test(e.key)) {
@@ -183,8 +179,8 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
     }
   }, []);
 
-  const handleHexKeyPress = useCallback(e => {
-    let value = e.target.value;
+  const handleHexKeyPress = useCallback((e) => {
+    const { value } = e.target;
     const index = e.target.selectionStart;
     // If selected and valid key
     if (hasSelection() && /[#a-fA-F0-9]/.test(e.key)) {
@@ -201,14 +197,14 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
         return;
       }
       // Generate the temp value based on where selection started
-      let hexValues = [...value];
+      const hexValues = [...value];
       // Validate that # starts on the 0th index
       if (e.key === '#' && index !== 0) {
         e.preventDefault();
         return;
       }
       hexValues.splice(index, 0, e.key);
-      let tempValue = hexValues.join('');
+      const tempValue = hexValues.join('');
       // If the temp value is invalid, prevent input
       if (isInvalidHexInput(tempValue) && !isPartialHexInput(tempValue)) {
         e.preventDefault();
@@ -216,26 +212,25 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
       }
       // Valid temp value; set the temp
       setTemp(tempValue);
-    }
-    else if (e.key !== '#') {
+    } else if (e.key !== '#') {
       e.preventDefault();
     }
   }, []);
 
   // On paste, validate that the text data is within bounds for RGB and HSL
-  const handlePaste = useCallback(max => e => {
+  const handlePaste = useCallback((max) => (e) => {
     const textData = e.clipboardData.getData('text');
     // Text data must be a number
     if (Number.isNaN(parseInt(textData, 10))) {
       e.preventDefault();
       return;
     }
-    let value = e.target.value;
+    const { value } = e.target;
     const index = e.target.selectionStart;
     const count = e.target.selectionEnd - index;
-    let digits = [...value];
+    const digits = [...value];
     digits.splice(index, count, textData);
-    let tempValue = digits.join('');
+    const tempValue = digits.join('');
     // Prevent if out of bounds
     if (outOfBounds(tempValue, max)) {
       e.preventDefault();
@@ -245,42 +240,42 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
   }, []);
 
   // On paste, validate that the resulting input is a valid or partial Hex
-  const handleHexPaste = useCallback(e => {
+  const handleHexPaste = useCallback((e) => {
     const textData = e.clipboardData.getData('text');
     // Prevent other characters
     if (!/[#a-fA-F0-9]+/.test(textData)) {
       e.preventDefault();
       return;
     }
-    let value = e.target.value;
+    const { value } = e.target;
     const index = e.target.selectionStart;
     const count = e.target.selectionEnd - index;
-    let chars = [...value];
+    const chars = [...value];
     chars.splice(index, count, textData);
-    let tempValue = chars.join('');
+    const tempValue = chars.join('');
     // Prevent if invalid and not a partial
     if (isInvalidHexInput(tempValue) && !isPartialHexInput(tempValue)) {
       e.preventDefault();
       return;
     }
     setTemp(tempValue);
-  }, [])
+  }, []);
 
   // On out of focus and value is empty string, set to default value of 0
-  const handleRgbBlur = useCallback(prop => e => {
+  const handleRgbBlur = useCallback((prop) => (e) => {
     if (e.target.value === '') {
       e.target.value = '0';
-      let tempRgb = clone(values.rgb);
+      const tempRgb = clone(values.rgb);
       tempRgb[prop] = e.target.value;
       updateRgb(tempRgb);
       updateColorName();
     }
   }, [values.rgb, updateRgb, updateColorName]);
 
-  const handleHslBlur = useCallback(prop => e => {
+  const handleHslBlur = useCallback((prop) => (e) => {
     if (e.target.value === '') {
       e.target.value = '0';
-      let tempHsl = clone(values.hsl);
+      const tempHsl = clone(values.hsl);
       tempHsl[prop] = e.target.value;
       updateHsl(tempHsl);
       updateColorName();
@@ -290,16 +285,16 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
   // On out of focus of color name, update to the actual color name
   const handleNameBlur = useCallback(() => {
     updateColorName();
-  }, [updateColorName])
+  }, [updateColorName]);
 
   // On change, update Hex, RGB, and HSL values
-  const handleRgbChange = useCallback(prop => e => {
+  const handleRgbChange = useCallback((prop) => (e) => {
     if (temp !== '') {
       e.target.value = temp;
       setTemp('');
     }
-    let value = e.target.value;
-    let tempRgb = clone(values.rgb);
+    const { value } = e.target;
+    const tempRgb = clone(values.rgb);
     tempRgb[prop] = value;
     if (value !== '') {
       updateRgb(tempRgb);
@@ -309,13 +304,13 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
     }
   }, [temp, values.rgb, updateRgb, updateColorName]);
 
-  const handleHslChange = useCallback(prop => e => {
+  const handleHslChange = useCallback((prop) => (e) => {
     if (temp !== '') {
       e.target.value = temp;
       setTemp('');
     }
-    let value = e.target.value;
-    let tempHsl = clone(values.hsl);
+    const { value } = e.target;
+    const tempHsl = clone(values.hsl);
     tempHsl[prop] = value;
     if (value !== '') {
       updateHsl(tempHsl);
@@ -325,25 +320,25 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
     }
   }, [temp, values.hsl, updateHsl, updateColorName]);
 
-  const handleHexChange = useCallback(e => {
+  const handleHexChange = useCallback((e) => {
     if (temp !== '') {
       e.target.value = temp;
       setTemp('');
     }
-    let value = e.target.value === '' ? '#000' : e.target.value;
+    const value = e.target.value === '' ? '#000' : e.target.value;
     updateHex(value);
     updateColorName();
   }, [temp, updateHex, updateColorName]);
 
-  const handleNameChange = useCallback(e => {
+  const handleNameChange = useCallback((e) => {
     const index = e.target.selectionStart;
     if (temp !== '') {
       e.target.value = temp;
       setTemp('');
     }
-    let value = e.target.value === '' ? 'Black' : e.target.value;
+    const value = e.target.value === '' ? 'Black' : e.target.value;
     const color = colorNameUtil.getHex(value);
-    let hexFromName = color === undefined ? stringToColor(value) : color.hex;
+    const hexFromName = color === undefined ? stringToColor(value) : color.hex;
     updateHex(hexFromName);
     // Set, but do not update internal values
     setColorName(value);
@@ -363,7 +358,7 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
     };
     // Define mouse events
     let isColorChanging = false;
-    const handleMouseDown = e => {
+    const handleMouseDown = (e) => {
       if (colorPicker.current.contains(e.target)) {
         updateValues();
         isColorChanging = true;
@@ -387,24 +382,30 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
       document.removeEventListener('mousedown', handleMouseDown);
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
-    }
+    };
   }, [updateColorName, values, setEaselColor]);
 
   return (
     <div className="picker">
-      <div className="colorPicker" ref={colorPicker}/>
+      <div className="colorPicker" ref={colorPicker} />
       <div className="colorValues">
-        <div className="color-container" style={{backgroundColor: values.hex}}>
+        <div className="color-container" style={{ backgroundColor: values.hex }}>
           <div className="name-container">
             <div id="name-label">
               name:&nbsp;
-              <input id="name-input" type="text" value={colorName} maxLength="40"
+              <input
+                id="name-input"
+                type="text"
+                value={colorName}
+                maxLength="40"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleNamePress}
                 onBlur={handleNameBlur}
                 onChange={handleNameChange}
               />
-              <button className="clip-name"
+              <button
+                type="button"
+                className="clip-name"
                 data-clipboard-target="#name-input"
               >
                 <img width="14" src={clippy} alt="Copy" />
@@ -414,13 +415,19 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
           <div className="hex-container">
             <div id="hex-label">
               hex:&nbsp;
-              <input id="hex-input" type="text" value={hex} maxLength="7"
+              <input
+                id="hex-input"
+                type="text"
+                value={hex}
+                maxLength="7"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleHexKeyPress}
                 onPaste={handleHexPaste}
                 onChange={handleHexChange}
               />
-              <button className="clip-hex"
+              <button
+                type="button"
+                className="clip-hex"
                 data-clipboard-target="#hex-input"
               >
                 <img width="14" src={clippy} alt="Copy" />
@@ -431,7 +438,10 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
             <span>{`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`}</span>
             <div>
               r:&nbsp;
-              <input type="text" value={rgb.r} maxLength="3"
+              <input
+                type="text"
+                value={rgb.r}
+                maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
                 onPaste={handlePaste(255)}
@@ -441,7 +451,10 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
             </div>
             <div>
               g:&nbsp;
-              <input type="text" value={rgb.g} maxLength="3"
+              <input
+                type="text"
+                value={rgb.g}
+                maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
                 onPaste={handlePaste(255)}
@@ -451,7 +464,10 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
             </div>
             <div>
               b:&nbsp;
-              <input type="text" value={rgb.b} maxLength="3"
+              <input
+                type="text"
+                value={rgb.b}
+                maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(255)}
                 onPaste={handlePaste(255)}
@@ -464,7 +480,10 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
             <span>{`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`}</span>
             <div>
               h:&nbsp;
-              <input type="text" value={hsl.h} maxLength="3"
+              <input
+                type="text"
+                value={hsl.h}
+                maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(360)}
                 onPaste={handlePaste(360)}
@@ -474,7 +493,10 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
             </div>
             <div>
               s:&nbsp;
-              <input type="text" value={hsl.s} maxLength="3"
+              <input
+                type="text"
+                value={hsl.s}
+                maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(100)}
                 onPaste={handlePaste(100)}
@@ -484,7 +506,10 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
             </div>
             <div>
               l:&nbsp;
-              <input type="text" value={hsl.l} maxLength="3"
+              <input
+                type="text"
+                value={hsl.l}
+                maxLength="3"
                 onKeyDown={handleKeyDown}
                 onKeyPress={handleKeyPress(100)}
                 onPaste={handlePaste(100)}
@@ -497,6 +522,6 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
       </div>
     </div>
   );
-}
+};
 
 export default Picker;

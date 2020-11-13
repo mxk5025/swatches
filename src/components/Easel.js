@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Clipboard from 'clipboard';
-import PickerCreator from '../api/PickerCreator.js';
-import ColorNameUtil from '../api/ColorNameUtil.js';
+import PickerCreator from '../api/PickerCreator';
+import ColorNameUtil from '../api/ColorNameUtil';
 import Picker from './Picker';
 import Scheme from './Scheme';
 import './Easel.css';
@@ -29,7 +29,7 @@ const Easel = () => {
   };
 
   const removeScheme = (scheme) => {
-    setSchemes(schemes.filter(otherScheme => otherScheme !== scheme));
+    setSchemes(schemes.filter((otherScheme) => otherScheme !== scheme));
   };
 
   return (
@@ -42,8 +42,8 @@ const Easel = () => {
         setEaselColor={setEaselColor}
       />
       <div className="scheme-container">
-        <button onClick={e => addScheme()}>New Scheme</button>
-        {schemes.map(scheme => (
+        <button type="button" onClick={() => addScheme()}>New Scheme</button>
+        {schemes.map((scheme) => (
           <Scheme
             key={scheme}
             schemeId={scheme}
@@ -54,6 +54,6 @@ const Easel = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Easel;

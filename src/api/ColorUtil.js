@@ -1,10 +1,13 @@
 import tinycolor from 'tinycolor2';
 
 export default class ColorUtil {
+  constructor() {
+    this.tinycolor = tinycolor.bind(this);
+  }
 
   // Create the color object from an input
   createColor(input) {
-    return tinycolor(input);
+    return this.tinycolor(input);
   }
 
   // Spin the hue around the color wheel
@@ -15,7 +18,7 @@ export default class ColorUtil {
 
   // Get a randomly generated color in hex
   getRandom() {
-    return tinycolor.random().toHexString();
+    return this.tinycolor.random().toHexString();
   }
 
   // Get the complementary color in hex
@@ -28,34 +31,33 @@ export default class ColorUtil {
   getAnalogous(input) {
     const color = this.createColor(input);
     return color.analogous()
-                .map((c) => { return c.toHexString(); });
+      .map((c) => c.toHexString());
   }
 
   // Get the monochromatic colors in hex
   getMonochromatic(input) {
     const color = this.createColor(input);
     return color.monochromatic()
-                .map((c) => { return c.toHexString(); });
+      .map((c) => c.toHexString());
   }
 
   // Get the splitcomplement colors in hex
   getSplitcomplement(input) {
     const color = this.createColor(input);
     return color.splitcomplement()
-                .map((c) => { return c.toHexString(); });
+      .map((c) => c.toHexString());
   }
 
   // Get the triad colors in hex
   getTriad(input) {
     const color = this.createColor(input);
     return color.triad()
-                .map((c) => { return c.toHexString(); });
+      .map((c) => c.toHexString());
   }
 
   getTetrad(input) {
     const color = this.createColor(input);
     return color.tetrad()
-                .map((c) => { return c.toHexString(); });
+      .map((c) => c.toHexString());
   }
-
 }
