@@ -30,19 +30,6 @@ const isPartialHexInput = value => {
   return partialHexPattern.test(value);
 };
 
-// Convert short hex to long hex when using color names
-const convertShortHexToLongHex = hexVal => {
-  let longHex = "#";
-  const index = hexVal.startsWith('#') ? 1 : 0;
-  if (hexVal.length - index === 6) {
-    return hexVal;
-  }
-  for (let ch of hexVal.slice(index)) {
-    longHex += ch + ch;
-  }
-  return longHex;
-};
-
 // Determine if document has a selection
 const hasSelection = () => {
   const selection = document.getSelection() ?
@@ -84,10 +71,9 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
 
   // Update the color name when necessary
   const updateColorName = useCallback(() => {
-    const longHex = convertShortHexToLongHex(values.hex);
-    let color = colorNameUtil.getColor(longHex);
+    let color = colorNameUtil.getColor(values.hex);
     // Use the nearest color name if not defined
-    color = color === undefined ? colorNameUtil.getNearestColor(longHex).name : color.name;
+    color = color === undefined ? colorNameUtil.getNearestColor(values.hex).name : color.name;
     setColorName(color);
   }, [colorNameUtil, values]);
 
