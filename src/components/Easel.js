@@ -18,7 +18,7 @@ const pickerCreator = new PickerCreator(defaultPickerName);
 const [pickerInstance, values] = pickerCreator.generate();
 
 const schemeName = 'Scheme-';
-var schemeId = 0;
+let schemeId = 1;
 
 const Easel = () => {
   const [schemes, setSchemes] = useState([]);

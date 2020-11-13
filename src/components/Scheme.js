@@ -7,7 +7,6 @@ const maxColors = 8;
 const Scheme = ({schemeId, remove, easelColor}) => {
   const [colors, setColors] = useState([]);
   const [name, setName] = useState(schemeId.split('-').join(' '));
-  const [selected, setSelected] = useState(false);
 
   const addColor = useCallback(() => {
     if (colors.length >= maxColors || colors.includes(easelColor)) {
@@ -24,10 +23,14 @@ const Scheme = ({schemeId, remove, easelColor}) => {
     setColors(colors.map(otherColor => otherColor !== color ? otherColor : replacement));
   }, [colors]);
 
+  const rename = useCallback(e => {
+    setName(e.target.value);
+  }, []);
+
   return (
     <div className="scheme">
       <div className="scheme-name">
-        <span onClick={() => setSelected(true)}>{name}</span>
+        <input value={name} onChange={rename}/>
       </div>
       <div className="scheme-buttons">
         <button onClick={() => addColor()}>Add Current Color</button>

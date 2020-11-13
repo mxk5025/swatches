@@ -3,6 +3,11 @@
   font-weight: bold;
 }
 
+.scheme-name input {
+  width: 14ch;
+  text-align: left;
+}
+
 .scheme-buttons {
   display: flex;
   justify-content: space-between;
