@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/swatches/static/css/main.59681778.chunk.css",
-    "main.js": "/swatches/static/js/main.f240e39a.chunk.js",
-    "main.js.map": "/swatches/static/js/main.f240e39a.chunk.js.map",
+    "main.css": "/swatches/static/css/main.8dbfdb1f.chunk.css",
+    "main.js": "/swatches/static/js/main.602bd9d1.chunk.js",
+    "main.js.map": "/swatches/static/js/main.602bd9d1.chunk.js.map",
     "runtime-main.js": "/swatches/static/js/runtime-main.057379b0.js",
     "runtime-main.js.map": "/swatches/static/js/runtime-main.057379b0.js.map",
     "static/js/2.ed9fac65.chunk.js": "/swatches/static/js/2.ed9fac65.chunk.js",
     "static/js/2.ed9fac65.chunk.js.map": "/swatches/static/js/2.ed9fac65.chunk.js.map",
     "index.html": "/swatches/index.html",
-    "static/css/main.59681778.chunk.css.map": "/swatches/static/css/main.59681778.chunk.css.map",
+    "static/css/main.8dbfdb1f.chunk.css.map": "/swatches/static/css/main.8dbfdb1f.chunk.css.map",
     "static/js/2.ed9fac65.chunk.js.LICENSE.txt": "/swatches/static/js/2.ed9fac65.chunk.js.LICENSE.txt",
     "static/media/clippy.89bd48cb.svg": "/swatches/static/media/clippy.89bd48cb.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.057379b0.js",
     "static/js/2.ed9fac65.chunk.js",
-    "static/css/main.59681778.chunk.css",
-    "static/js/main.f240e39a.chunk.js"
+    "static/css/main.8dbfdb1f.chunk.css",
+    "static/js/main.602bd9d1.chunk.js"
   ]
 }
