@@ -71,7 +71,7 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
   const [hex, setHex] = useState(values.hex);
   const [rgb, setRgb] = useState(values.rgb);
   const [hsl, setHsl] = useState(values.hsl);
-  // Allow ability to toggle what is displayed
+  // TODO: Allow ability to toggle what is displayed
   // const [showOptions, setShowOptions] = useState({
   //   name: true,
   //   hex: true,
@@ -383,12 +383,12 @@ export default function Picker({pickerInstance, values, colorNameUtil, setEaselC
         isColorChanging = true;
       }
     };
-    const handleMouseMove = e => {
+    const handleMouseMove = () => {
       if (isColorChanging) {
         updateValues();
       }
     };
-    const handleMouseUp = e => {
+    const handleMouseUp = () => {
       if (isColorChanging) {
         isColorChanging = false;
       }

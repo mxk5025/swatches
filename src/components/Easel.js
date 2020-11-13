@@ -29,15 +29,7 @@ const Easel = () => {
   };
 
   const removeScheme = (scheme) => {
-    var schemesCopy = [...schemes];
-    for (var i = schemesCopy.length - 1; i >= 0; i--) {
-      var s = schemesCopy[i];
-      if (s === scheme) {
-        schemesCopy.splice(i, 1);
-        break;
-      }
-    }
-    setSchemes(schemesCopy);
+    setSchemes(schemes.filter(otherScheme => otherScheme !== scheme));
   };
 
   return (

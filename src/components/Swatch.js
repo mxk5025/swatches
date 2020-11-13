@@ -4,7 +4,7 @@ import './Swatch.css'
 const Swatch = ({colorId, color, removeColor, changeColor}) => {
   const [currentColor, setCurrentColor] = useState(color);
 
-  const changeColorToCurrent = useCallback(e => {
+  const changeColorToCurrent = useCallback(() => {
     changeColor(color, currentColor);
   }, [color, currentColor, changeColor])
 
@@ -22,7 +22,7 @@ const Swatch = ({colorId, color, removeColor, changeColor}) => {
     <div className="swatch" style={{backgroundColor: currentColor, color: currentColor.slice(1) < 'a00000' ? '#fff' : '#000'}}>
       <button onClick={() => {
           changeColorToCurrent();
-          removeColor(colorId);
+          removeColor(color);
         }}
       >
         Remove
