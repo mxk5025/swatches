@@ -302,7 +302,7 @@ const Picker = ({pickerInstance, values, colorNameUtil, setEaselColor}) => {
   }, [values.hsl, updateHsl, updateColorName]);
 
   // On out of focus of color name, update to the actual color name
-  const handleNameBlur = useCallback(e => {
+  const handleNameBlur = useCallback(() => {
     updateColorName();
   }, [updateColorName])
 
