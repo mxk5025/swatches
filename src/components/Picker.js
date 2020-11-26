@@ -29,12 +29,7 @@ const isPartialHexInput = (value) => {
 };
 
 // Determine if document has a selection
-const hasSelection = () => {
-  const selection = document.getSelection()
-    ? document.getSelection().toString()
-    : document.selection.createRange().toString();
-  return selection.length > 0;
-};
+const hasSelection = (element) => element.selectionEnd - element.selectionStart !== 0;
 
 // Convert any string to a valid hex color
 const stringToColor = (str) => {
@@ -117,7 +112,7 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
   const handleKeyPress = useCallback((max) => (e) => {
     const { value } = e.target;
     // If selected and valid key
-    if (hasSelection() && /[0-9]/.test(e.key)) {
+    if (hasSelection(e.target) && /[0-9]/.test(e.key)) {
       return;
     }
     // Validate the key entered; otherwise prevent input
@@ -147,9 +142,9 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
     // Value before e.key is added
     const { value } = e.target;
     // If there is a selection allow input
-    if (hasSelection()) {
+    if (hasSelection(e.target)) {
       // If replacing entire input, make sure key is upper case
-      if (document.getSelection().toString() === value) {
+      if (window.getSelection().toString() === value) {
         e.key = e.key.toUpperCase();
         setTemp(e.key);
       }
@@ -183,7 +178,7 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
     const { value } = e.target;
     const index = e.target.selectionStart;
     // If selected and valid key
-    if (hasSelection() && /[#a-fA-F0-9]/.test(e.key)) {
+    if (hasSelection(e.target) && /[#a-fA-F0-9]/.test(e.key)) {
       if (e.key === '#' && index !== 0) {
         e.preventDefault();
       }
@@ -391,7 +386,7 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
       <div className="colorValues">
         <div className="color-container" style={{ backgroundColor: values.hex }}>
           <div className="name-container">
-            <div id="name-label">
+            <div className="name-label">
               name:&nbsp;
               <input
                 id="name-input"
@@ -413,7 +408,7 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
             </div>
           </div>
           <div className="hex-container">
-            <div id="hex-label">
+            <div className="hex-label">
               hex:&nbsp;
               <input
                 id="hex-input"

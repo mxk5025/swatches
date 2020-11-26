@@ -25,22 +25,23 @@
   font-size: 16px;
   letter-spacing: 0.1px;
   line-height: 1.5;
+  text-shadow: -0.9px -0.9px 0 #444, 0.9px -0.9px 0 #444, -0.9px 0.9px 0 #444, 0.9px 0.9px 0 #444;
+  color: #fff;
   border: 1px;
   border-style: solid;
+  border-color: #000;
+  box-shadow: 0 10px 6px -6px #777;
 }
 
-input {
-  text-align: center;
+.picker input {
   width: 3.5ch;
-  font-family: inherit;
-  font-size: inherit;
 }
 
 .hex-container {
   height: 30px;
 }
 
-#name-label, #hex-label {
+.name-label, .hex-label {
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -48,7 +49,7 @@ input {
   padding: 2px 0;
 }
 
-#name-label input {
+.name-label input {
   width: 14ch;
   padding: 2.5px 2px;
 }
@@ -63,7 +64,7 @@ input {
   border: 1px solid rgba(27,31,35,.2);
 }
 
-#hex-label input {
+.hex-label input {
   width: 7.5ch;
   padding: 2.5px 3px;
 }
