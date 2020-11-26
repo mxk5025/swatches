@@ -1,6 +1,4 @@
 # Files
-*.txt
-t*.md
 .env
 
 # Directories

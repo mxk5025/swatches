@@ -19,6 +19,8 @@ module.exports = {
     'no-plusplus': 'off',
     'no-bitwise': 'off',
     'no-new': 'off',
+    'no-unused-vars': 'off',
+    'spaced-comment': 'off',
     'react/prop-types': 0,
     'object-curly-newline': ['error', { multiline: true }],
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
