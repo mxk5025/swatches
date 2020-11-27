@@ -15,25 +15,24 @@ const Swatch = ({ colorId, color, removeColor, changeColor }) => {
 
   // On change set the local current color
   const handleChange = useCallback((e) => {
+    changeColorToCurrent();
     setCurrentColor(e.target.value);
-  }, []);
+  }, [changeColorToCurrent]);
 
   const handleRemove = useCallback(() => {
     changeColorToCurrent();
-    removeColor(color);
-  }, []);
+    removeColor(currentColor);
+  }, [changeColorToCurrent, currentColor]);
 
   return (
-    <div className="swatch" style={{ backgroundColor: currentColor, color: currentColor.slice(1) < 'a00000' ? '#fff' : '#000' }}>
+    <div className="swatch" style={{ backgroundColor: currentColor }}>
       <button
         type="button"
         onClick={() => handleRemove()}
       >
         Remove
       </button>
-      <span>{currentColor}</span>
       <input
-        id={`swatch-input-${colorId}`}
         type="text"
         value={currentColor}
         maxLength="7"

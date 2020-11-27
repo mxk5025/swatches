@@ -9,10 +9,16 @@
 
 .swatch span {
   text-align: center;
+  background-color: #fff;
+  align-self: center;
+  width: 7.5ch;
+  border: 1px;
+  border-style: solid;
 }
 
-#swatch-input {
+.swatch input {
   width: 7.5ch;
   padding: 2.5px 3px;
-  font-family: 'Consolas', 'Courier New', Courier, monospace;
+  border: 1px;
+  border-style: solid;
 }
