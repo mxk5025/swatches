@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import rdfc from 'rfdc';
+import { complementary } from '../api/ColorUtil';
 import clippy from '../assets/clippy.svg';
 import './Picker.css';
 
@@ -48,6 +49,7 @@ const stringToColor = (str) => {
 const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
   const [temp, setTemp] = useState('');
   const [colorName, setColorName] = useState('Red');
+  const [comp, setComp] = useState(complementary(values.hex));
   // TODO: Allow ability to toggle what is displayed
   // const [showOptions, setShowOptions] = useState({
   //   name: true,
@@ -329,6 +331,7 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
   useEffect(() => {
     // Define update values
     const updateValues = () => {
+      setComp(complementary(values.hex));
       updateColorName();
       setEaselColor(values.hex);
     };
@@ -496,7 +499,12 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
               </div>
             </div>
           </div>
+          <div className="preview">
+            <div className="current-color" style={{ backgroundColor: values.hex }}>
+              <span>{values.hex}</span>
             </div>
+            <div className="comp-color" style={{ backgroundColor: comp }}>
+              <span>{comp}</span>
             </div>
           </div>
         </div>
