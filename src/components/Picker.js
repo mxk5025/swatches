@@ -48,9 +48,6 @@ const stringToColor = (str) => {
 const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
   const [temp, setTemp] = useState('');
   const [colorName, setColorName] = useState('Red');
-  const [hex, setHex] = useState(values.hex);
-  const [rgb, setRgb] = useState(values.rgb);
-  const [hsl, setHsl] = useState(values.hsl);
   // TODO: Allow ability to toggle what is displayed
   // const [showOptions, setShowOptions] = useState({
   //   name: true,
@@ -72,28 +69,19 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
 
   // Update Hex, RGB, and HSL in component as well as the widget
   const updateRgb = useCallback((tempRgb) => {
-    setRgb(tempRgb);
     pickerInstance.color.set(tempRgb);
-    setHex(values.hex);
-    setHsl(values.hsl);
     setEaselColor(values.hex);
   }, [pickerInstance.color, values.hex, values.hsl, setEaselColor]);
 
   const updateHsl = useCallback((tempHsl) => {
-    setHsl(tempHsl);
     pickerInstance.color.set(tempHsl);
-    setHex(values.hex);
-    setRgb(values.rgb);
     setEaselColor(values.hex);
   }, [pickerInstance.color, values.hex, values.rgb, setEaselColor]);
 
   const updateHex = useCallback((tempHex) => {
-    setHex(tempHex);
     // Do not update other values unless hex is valid
     if (!isInvalidHexInput(tempHex)) {
       pickerInstance.color.set(tempHex);
-      setRgb(values.rgb);
-      setHsl(values.hsl);
       setEaselColor(tempHex);
     }
   }, [pickerInstance.color, values.rgb, values.hsl, setEaselColor]);
@@ -294,8 +282,6 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
     if (value !== '') {
       updateRgb(tempRgb);
       updateColorName();
-    } else {
-      setRgb(tempRgb);
     }
   }, [temp, values.rgb, updateRgb, updateColorName]);
 
@@ -310,8 +296,6 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
     if (value !== '') {
       updateHsl(tempHsl);
       updateColorName();
-    } else {
-      setHsl(tempHsl);
     }
   }, [temp, values.hsl, updateHsl, updateColorName]);
 
@@ -345,9 +329,6 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
   useEffect(() => {
     // Define update values
     const updateValues = () => {
-      setHex(values.hex);
-      setRgb(values.rgb);
-      setHsl(values.hsl);
       updateColorName();
       setEaselColor(values.hex);
     };
@@ -384,133 +365,138 @@ const Picker = ({ pickerInstance, values, colorNameUtil, setEaselColor }) => {
     <div className="picker">
       <div className="colorPicker" ref={colorPicker} />
       <div className="colorValues">
-        <div className="color-container" style={{ backgroundColor: values.hex }}>
-          <div className="name-container">
-            <div className="name-label">
-              name:&nbsp;
-              <input
-                id="name-input"
-                type="text"
-                value={colorName}
-                maxLength="40"
-                onKeyDown={handleKeyDown}
-                onKeyPress={handleNamePress}
-                onBlur={handleNameBlur}
-                onChange={handleNameChange}
-              />
-              <button
-                type="button"
-                className="clip-name"
-                data-clipboard-target="#name-input"
-              >
-                <img width="14" src={clippy} alt="Copy" />
-              </button>
+        <div className="color-container">
+          <div className="info-container" style={{ backgroundColor: '#fff' }}>
+            <div className="name-container">
+              <div className="name-label">
+                name:&nbsp;
+                <input
+                  id="name-input"
+                  type="text"
+                  value={colorName}
+                  maxLength="40"
+                  onKeyDown={handleKeyDown}
+                  onKeyPress={handleNamePress}
+                  onBlur={handleNameBlur}
+                  onChange={handleNameChange}
+                />
+                <button
+                  type="button"
+                  className="clip-name"
+                  data-clipboard-target="#name-input"
+                >
+                  <img width="14" src={clippy} alt="Copy" />
+                </button>
+              </div>
+            </div>
+            <div className="hex-container">
+              <div className="hex-label">
+                hex:&nbsp;
+                <input
+                  id="hex-input"
+                  type="text"
+                  value={values.hex}
+                  maxLength="7"
+                  onKeyDown={handleKeyDown}
+                  onKeyPress={handleHexKeyPress}
+                  onPaste={handleHexPaste}
+                  onChange={handleHexChange}
+                />
+                <button
+                  type="button"
+                  className="clip-hex"
+                  data-clipboard-target="#hex-input"
+                >
+                  <img width="14" src={clippy} alt="Copy" />
+                </button>
+              </div>
+            </div>
+            <div className="rgb-container">
+              <span>{`rgb(${values.rgb.r}, ${values.rgb.g}, ${values.rgb.b})`}</span>
+              <div>
+                r:&nbsp;
+                <input
+                  type="text"
+                  value={values.rgb.r}
+                  maxLength="3"
+                  onKeyDown={handleKeyDown}
+                  onKeyPress={handleKeyPress(255)}
+                  onPaste={handlePaste(255)}
+                  onBlur={handleRgbBlur('r')}
+                  onChange={handleRgbChange('r')}
+                />
+              </div>
+              <div>
+                g:&nbsp;
+                <input
+                  type="text"
+                  value={values.rgb.g}
+                  maxLength="3"
+                  onKeyDown={handleKeyDown}
+                  onKeyPress={handleKeyPress(255)}
+                  onPaste={handlePaste(255)}
+                  onBlur={handleRgbBlur('g')}
+                  onChange={handleRgbChange('g')}
+                />
+              </div>
+              <div>
+                b:&nbsp;
+                <input
+                  type="text"
+                  value={values.rgb.b}
+                  maxLength="3"
+                  onKeyDown={handleKeyDown}
+                  onKeyPress={handleKeyPress(255)}
+                  onPaste={handlePaste(255)}
+                  onBlur={handleRgbBlur('b')}
+                  onChange={handleRgbChange('b')}
+                />
+              </div>
+            </div>
+            <div className="hsl-container">
+              <span>{`hsl(${values.hsl.h}, ${values.hsl.s}%, ${values.hsl.l}%)`}</span>
+              <div>
+                h:&nbsp;
+                <input
+                  type="text"
+                  value={values.hsl.h}
+                  maxLength="3"
+                  onKeyDown={handleKeyDown}
+                  onKeyPress={handleKeyPress(360)}
+                  onPaste={handlePaste(360)}
+                  onBlur={handleHslBlur('h')}
+                  onChange={handleHslChange('h')}
+                />
+              </div>
+              <div>
+                s:&nbsp;
+                <input
+                  type="text"
+                  value={values.hsl.s}
+                  maxLength="3"
+                  onKeyDown={handleKeyDown}
+                  onKeyPress={handleKeyPress(100)}
+                  onPaste={handlePaste(100)}
+                  onBlur={handleHslBlur('s')}
+                  onChange={handleHslChange('s')}
+                />
+              </div>
+              <div>
+                l:&nbsp;
+                <input
+                  type="text"
+                  value={values.hsl.l}
+                  maxLength="3"
+                  onKeyDown={handleKeyDown}
+                  onKeyPress={handleKeyPress(100)}
+                  onPaste={handlePaste(100)}
+                  onBlur={handleHslBlur('l')}
+                  onChange={handleHslChange('l')}
+                />
+              </div>
             </div>
           </div>
-          <div className="hex-container">
-            <div className="hex-label">
-              hex:&nbsp;
-              <input
-                id="hex-input"
-                type="text"
-                value={hex}
-                maxLength="7"
-                onKeyDown={handleKeyDown}
-                onKeyPress={handleHexKeyPress}
-                onPaste={handleHexPaste}
-                onChange={handleHexChange}
-              />
-              <button
-                type="button"
-                className="clip-hex"
-                data-clipboard-target="#hex-input"
-              >
-                <img width="14" src={clippy} alt="Copy" />
-              </button>
             </div>
-          </div>
-          <div className="rgb-container">
-            <span>{`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`}</span>
-            <div>
-              r:&nbsp;
-              <input
-                type="text"
-                value={rgb.r}
-                maxLength="3"
-                onKeyDown={handleKeyDown}
-                onKeyPress={handleKeyPress(255)}
-                onPaste={handlePaste(255)}
-                onBlur={handleRgbBlur('r')}
-                onChange={handleRgbChange('r')}
-              />
-            </div>
-            <div>
-              g:&nbsp;
-              <input
-                type="text"
-                value={rgb.g}
-                maxLength="3"
-                onKeyDown={handleKeyDown}
-                onKeyPress={handleKeyPress(255)}
-                onPaste={handlePaste(255)}
-                onBlur={handleRgbBlur('g')}
-                onChange={handleRgbChange('g')}
-              />
-            </div>
-            <div>
-              b:&nbsp;
-              <input
-                type="text"
-                value={rgb.b}
-                maxLength="3"
-                onKeyDown={handleKeyDown}
-                onKeyPress={handleKeyPress(255)}
-                onPaste={handlePaste(255)}
-                onBlur={handleRgbBlur('b')}
-                onChange={handleRgbChange('b')}
-              />
-            </div>
-          </div>
-          <div className="hsl-container">
-            <span>{`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`}</span>
-            <div>
-              h:&nbsp;
-              <input
-                type="text"
-                value={hsl.h}
-                maxLength="3"
-                onKeyDown={handleKeyDown}
-                onKeyPress={handleKeyPress(360)}
-                onPaste={handlePaste(360)}
-                onBlur={handleHslBlur('h')}
-                onChange={handleHslChange('h')}
-              />
-            </div>
-            <div>
-              s:&nbsp;
-              <input
-                type="text"
-                value={hsl.s}
-                maxLength="3"
-                onKeyDown={handleKeyDown}
-                onKeyPress={handleKeyPress(100)}
-                onPaste={handlePaste(100)}
-                onBlur={handleHslBlur('s')}
-                onChange={handleHslChange('s')}
-              />
-            </div>
-            <div>
-              l:&nbsp;
-              <input
-                type="text"
-                value={hsl.l}
-                maxLength="3"
-                onKeyDown={handleKeyDown}
-                onKeyPress={handleKeyPress(100)}
-                onPaste={handlePaste(100)}
-                onBlur={handleHslBlur('l')}
-                onChange={handleHslChange('l')}
-              />
             </div>
           </div>
         </div>
